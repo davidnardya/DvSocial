@@ -27,8 +27,16 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.davidnardya.dvsocial.model.UserPost
 import com.davidnardya.dvsocial.utils.Constants
+import com.davidnardya.dvsocial.viewmodel.FeedViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var viewModel: FeedViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -38,20 +46,8 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     fun ShowFeed() {
-        val users = listOf(
-            Constants.userI,
-            Constants.userII,
-            Constants.userIII
-        )
-        val posts = mutableListOf<UserPost>()
-        users.forEach { user ->
-            user.posts.forEach { post ->
-                post.userName = user.userName
-                posts.add(post)
-            }
-        }
         LazyColumn {
-            items(posts) { post ->
+            items(viewModel.getPosts()) { post ->
                 CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
                     Row {
                         Column(
