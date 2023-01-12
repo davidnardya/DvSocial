@@ -10,6 +10,7 @@ class FeedViewModel : ViewModel() {
 
     private val userLoggedInLiveData: MutableLiveData<Boolean> = MutableLiveData(false)
     private val currentUserLiveData: MutableLiveData<User> = MutableLiveData()
+    private val failedLogins: MutableLiveData<Int> = MutableLiveData(0)
 
     fun getPosts(): List<UserPost> {
         val users = listOf(
@@ -35,6 +36,7 @@ class FeedViewModel : ViewModel() {
                 it
             } else {
                 userLoggedInLiveData.value = false
+                failedLogins.value = failedLogins.value?.plus(1)
                 it
             }
         } ?: kotlin.run {
@@ -42,4 +44,8 @@ class FeedViewModel : ViewModel() {
         }
 
     }
+
+    fun getFailedLogins(): MutableLiveData<Int> = failedLogins
+    fun getUserLoggedIn(): MutableLiveData<Boolean> = userLoggedInLiveData
+
 }

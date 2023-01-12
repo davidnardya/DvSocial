@@ -31,6 +31,8 @@ import javax.inject.Inject
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -39,6 +41,7 @@ class MainActivity : ComponentActivity() {
     lateinit var viewModel: FeedViewModel
 
     private val stateLogin = mutableStateOf(false)
+    private val loginFailures = mutableStateOf(0)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,6 +50,13 @@ class MainActivity : ComponentActivity() {
                 ShowFeed()
             } else {
                 ShowLogin()
+            }
+
+            viewModel.getFailedLogins().observe(this) {
+                loginFailures.value = it
+            }
+            viewModel.getUserLoggedIn().observe(this) {
+                stateLogin.value = it
             }
         }
     }
@@ -70,6 +80,7 @@ class MainActivity : ComponentActivity() {
                     label = { Text(text = "Username") },
                     onValueChange = { userName = it },
                     placeholder = { Text(text = "Enter your username") },
+                    textStyle = handleLoginFailure(loginFailures.value)
                 )
             }
             Row(
@@ -81,6 +92,7 @@ class MainActivity : ComponentActivity() {
                     label = { Text(text = "Password") },
                     onValueChange = { password = it },
                     placeholder = { Text(text = "Enter your password") },
+                    textStyle = handleLoginFailure(loginFailures.value)
                 )
             }
             Row(
@@ -95,6 +107,17 @@ class MainActivity : ComponentActivity() {
             }
         }
 
+    }
+
+    @Composable
+    fun handleLoginFailure(loginFailures: Int) : TextStyle {
+        return if(loginFailures in 1..3) {
+            TextStyle(color = Color.Red)
+        } else if(loginFailures > 3) {
+            TextStyle(color = Color.Gray)
+        } else {
+            TextStyle(color = Color.Unspecified)
+        }
     }
 
     private fun handleLoginClick(userName: String, password: String) {
