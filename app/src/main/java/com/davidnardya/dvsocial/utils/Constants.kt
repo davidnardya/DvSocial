@@ -7,6 +7,7 @@ object Constants {
 
     val userI: User = User(
         "123",
+        "1122",
         "MyNameIsPaul",
         listOf(
             UserPost(
@@ -32,6 +33,7 @@ object Constants {
 
     val userII: User = User(
         "1234",
+        "1122",
         "ThisIsAUserName",
         listOf(
             UserPost(
@@ -51,6 +53,7 @@ object Constants {
 
     val userIII: User = User(
         "123412311111",
+        "1122",
         "FeckinHeckin",
         listOf(
             UserPost(
@@ -58,6 +61,20 @@ object Constants {
                 "",
                 "https://images.dog.ceo/breeds/ridgeback-rhodesian/n02087394_5552.jpg",
                 "Look at my doggo! His name is Loopy"
+            )
+        )
+    )
+
+    val loggedInUser: User = User(
+        "123321",
+        "1122",
+        "MyUser",
+        listOf(
+            UserPost(
+                "1231232133333331",
+                "",
+                "https://images.dog.ceo/breeds/ridgeback-rhodesian/n02087394_5552.jpg",
+                "Look at my doggo! His name is Do-Go"
             )
         )
     )
