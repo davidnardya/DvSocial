@@ -33,6 +33,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.lifecycle.lifecycleScope
+import com.davidnardya.dvsocial.model.UserPost
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -45,18 +49,21 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        viewModel.getFailedLogins().observe(this) {
+            loginFailures.value = it
+        }
+        viewModel.getUserLoggedIn().observe(this) {
+            stateLogin.value = it
+        }
+
+        viewModel.subscribeToUserListFlow()
+
         setContent {
             if (stateLogin.value) {
-                ShowFeed()
+                ShowFeed(viewModel.getFeedPostList())
             } else {
                 ShowLogin()
-            }
-
-            viewModel.getFailedLogins().observe(this) {
-                loginFailures.value = it
-            }
-            viewModel.getUserLoggedIn().observe(this) {
-                stateLogin.value = it
             }
         }
     }
@@ -125,9 +132,9 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    fun ShowFeed() {
+    fun ShowFeed(postList: List<UserPost>) {
         LazyColumn {
-            items(viewModel.getPosts()) { post ->
+            items(postList) { post ->
                 CompositionLocalProvider(
                     LocalLayoutDirection provides LayoutDirection.Ltr
                 ) {
@@ -137,7 +144,7 @@ class MainActivity : ComponentActivity() {
                         ) {
                             AsyncImage(
                                 model = ImageRequest.Builder(LocalContext.current)
-                                    .data(post.imageUrl)
+                                    .data(post.imageUrl.image)
                                     .build(),
                                 contentDescription = post.caption,
                                 contentScale = ContentScale.Crop,
