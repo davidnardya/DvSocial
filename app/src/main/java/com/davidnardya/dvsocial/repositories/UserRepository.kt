@@ -4,12 +4,16 @@ import com.davidnardya.dvsocial.api.UserApi
 import com.davidnardya.dvsocial.model.User
 import com.davidnardya.dvsocial.model.UserPost
 import com.davidnardya.dvsocial.utils.Constants
+import com.davidnardya.dvsocial.utils.UserPreferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import javax.inject.Inject
 import kotlin.random.Random
 
-class UserRepository @Inject constructor(private val userApi: UserApi) {
+class UserRepository @Inject constructor(
+    private val userApi: UserApi,
+    private val userPreferencesDataStore: UserPreferencesDataStore
+    ) {
     private val userList = MutableStateFlow(emptyList<User>())
 
     private suspend fun getUserImage() = userApi.getImage()
@@ -46,5 +50,17 @@ class UserRepository @Inject constructor(private val userApi: UserApi) {
         val oldList = userList.value.toMutableList()
         oldList.addAll(userListToSend)
         userList.tryEmit(userListToSend)
+    }
+
+    suspend fun saveUserInfo(username: String, password: String) {
+        userPreferencesDataStore.savePreferencesDataStoreValues("username",username)
+        userPreferencesDataStore.savePreferencesDataStoreValues("password",password)
+    }
+
+    suspend fun getUserInfo(): Pair<String, String> {
+        return Pair(
+            userPreferencesDataStore.getPreferencesDataStoreValues("username","").toString(),
+            userPreferencesDataStore.getPreferencesDataStoreValues("password","").toString()
+        )
     }
 }
