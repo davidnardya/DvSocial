@@ -1,6 +1,7 @@
 package com.davidnardya.dvsocial
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.border
@@ -125,6 +126,9 @@ class MainActivity : ComponentActivity() {
 
     private fun handleRegistrationClick(userName: String, password: String) {
         viewModel.registerUser(userName, password)
+        Toast.makeText(this, "User created!", Toast.LENGTH_SHORT).show()
+        stateLogin.value = ScreenOptions.SHOW_LOGIN
+
     }
 
     @Composable
