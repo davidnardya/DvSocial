@@ -16,6 +16,8 @@ class UserRepository @Inject constructor(
     ) {
     private val userList = MutableStateFlow(emptyList<User>())
 
+
+
     private suspend fun getUserImage() = userApi.getImage()
 
     fun getUserListFlow(): Flow<List<User>> = userList
@@ -53,14 +55,19 @@ class UserRepository @Inject constructor(
     }
 
     suspend fun saveUserInfo(username: String, password: String) {
-        userPreferencesDataStore.savePreferencesDataStoreValues("username",username)
-        userPreferencesDataStore.savePreferencesDataStoreValues("password",password)
+        userPreferencesDataStore.savePreferencesDataStoreValues(USER_NAME,username)
+        userPreferencesDataStore.savePreferencesDataStoreValues(PASSWORD,password)
     }
 
     suspend fun getUserInfo(): Pair<String, String> {
         return Pair(
-            userPreferencesDataStore.getPreferencesDataStoreValues("username","").toString(),
-            userPreferencesDataStore.getPreferencesDataStoreValues("password","").toString()
+            userPreferencesDataStore.getPreferencesDataStoreValues(USER_NAME,"").toString(),
+            userPreferencesDataStore.getPreferencesDataStoreValues(PASSWORD,"").toString()
         )
+    }
+
+    companion object {
+        private const val USER_NAME = "username"
+        private const val PASSWORD = "password"
     }
 }

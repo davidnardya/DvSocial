@@ -22,7 +22,7 @@ class MainActivity : ComponentActivity() {
 
     lateinit var navController: NavHostController
 
-    private val navigationState = mutableStateOf(ScreenOptions.SHOW_LOGIN)
+//    private val navigationState = mutableStateOf(ScreenOptions.SHOW_LOGIN)
     private val loginFailures = mutableStateOf(0)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,7 +33,7 @@ class MainActivity : ComponentActivity() {
 //        }
         viewModel.getIsUserLoggedIn().observe(this) {
             if(it) {
-                navigationState.value = ScreenOptions.SHOW_FEED
+//                navigationState.value = ScreenOptions.SHOW_FEED
             }
         }
         viewModel.subscribeToUserListFlow()
@@ -42,7 +42,9 @@ class MainActivity : ComponentActivity() {
             navController = rememberNavController()
             SetupNavGraph(
                 navHostController = navController,
-                feedPostList = viewModel.getFeedPostList()
+                feedPostList = viewModel.getFeedPostList(),
+                viewModel = viewModel,
+                context = this
             )
 //            when(navigationState.value) {
 //                ScreenOptions.SHOW_LOGIN -> {
@@ -59,13 +61,13 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    fun handleLoginClick(userName: String, password: String) {
-        lifecycleScope.launch {
-            if(viewModel.userAttemptLogin(userName,password)) {
-                navigationState.value = ScreenOptions.SHOW_FEED
-            }
-        }
-    }
+//    fun handleLoginClick(userName: String, password: String) {
+//        lifecycleScope.launch {
+//            if(viewModel.userAttemptLogin(userName,password)) {
+//                navigationState.value = ScreenOptions.SHOW_FEED
+//            }
+//        }
+//    }
 
 
 //    @Composable

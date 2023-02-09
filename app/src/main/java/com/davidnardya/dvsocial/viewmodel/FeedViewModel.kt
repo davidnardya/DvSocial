@@ -40,7 +40,7 @@ class FeedViewModel @Inject constructor(private val userRepository: UserReposito
         }
     }
 
-    suspend fun userAttemptLogin(userName: String, password: String): Boolean {
+    fun userAttemptLogin(userName: String, password: String) {
 //        userLoggedInLiveData.value?.let {
 //            return if (userName == Constants.loggedInUser.userName && password == Constants.loggedInUser.password) {
 //                currentUserLiveData.value = Constants.loggedInUser
@@ -54,8 +54,17 @@ class FeedViewModel @Inject constructor(private val userRepository: UserReposito
 //        } ?: kotlin.run {
 //            return false
 //        }
-        return userRepository.getUserInfo().first == userName &&
-                userRepository.getUserInfo().second == password
+
+        viewModelScope.launch {
+            if(
+            userRepository.getUserInfo().first == userName &&
+            userRepository.getUserInfo().second == password) {
+                isUserLoggedInLiveData.value = true
+            }
+        }
+
+//        return userRepository.getUserInfo().first == userName &&
+//                userRepository.getUserInfo().second == password
 
     }
 

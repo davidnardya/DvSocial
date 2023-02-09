@@ -1,5 +1,6 @@
 package com.davidnardya.dvsocial.navigation.screens
 
+import android.content.Context
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
 import androidx.compose.material.Text
@@ -14,9 +15,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.navigation.NavHostController
+import com.davidnardya.dvsocial.viewmodel.FeedViewModel
 
 @Composable
-fun LoginScreen(navHostController: NavHostController) {
+fun LoginScreen(navHostController: NavHostController, viewModel: FeedViewModel, context: Context) {
     var userName by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
     val loginFailures = rememberSaveable { mutableStateOf(0) }
@@ -56,9 +58,12 @@ fun LoginScreen(navHostController: NavHostController) {
         ) {
             Button(
                 onClick = {
-                    navHostController.navigate(route = Screen.Feed.route) {
-                        popUpTo(Screen.Login.route) {
-                            inclusive = true
+                    viewModel.userAttemptLogin(userName, password)
+                    if(viewModel.getIsUserLoggedIn().value == true) {
+                        navHostController.navigate(route = Screen.Feed.route) {
+                            popUpTo(Screen.Login.route) {
+                                inclusive = true
+                            }
                         }
                     }
                 /*handleLoginClick(userName, password)*/
