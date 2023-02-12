@@ -4,6 +4,8 @@ import com.davidnardya.dvsocial.api.UserApi
 import com.davidnardya.dvsocial.model.User
 import com.davidnardya.dvsocial.model.UserPost
 import com.davidnardya.dvsocial.utils.Constants
+import com.davidnardya.dvsocial.utils.Constants.PASSWORD
+import com.davidnardya.dvsocial.utils.Constants.USER_NAME
 import com.davidnardya.dvsocial.utils.UserPreferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,8 +17,6 @@ class UserRepository @Inject constructor(
     private val userPreferencesDataStore: UserPreferencesDataStore
     ) {
     private val userList = MutableStateFlow(emptyList<User>())
-
-
 
     private suspend fun getUserImage() = userApi.getImage()
 
@@ -59,15 +59,12 @@ class UserRepository @Inject constructor(
         userPreferencesDataStore.savePreferencesDataStoreValues(PASSWORD,password)
     }
 
-    suspend fun getUserInfo(): Pair<String, String> {
-        return Pair(
-            userPreferencesDataStore.getPreferencesDataStoreValues(USER_NAME,"").toString(),
-            userPreferencesDataStore.getPreferencesDataStoreValues(PASSWORD,"").toString()
+    suspend fun getUserInfo(): User {
+        return User(
+            userId = "${Random.nextInt(100000000,999999999)}",
+            password = userPreferencesDataStore.getPreferencesDataStoreValues(PASSWORD,"").toString(),
+            userName = userPreferencesDataStore.getPreferencesDataStoreValues(USER_NAME,"").toString(),
+            posts = emptyList()
         )
-    }
-
-    companion object {
-        private const val USER_NAME = "username"
-        private const val PASSWORD = "password"
     }
 }

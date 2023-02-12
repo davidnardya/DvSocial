@@ -22,20 +22,9 @@ class MainActivity : ComponentActivity() {
 
     lateinit var navController: NavHostController
 
-//    private val navigationState = mutableStateOf(ScreenOptions.SHOW_LOGIN)
-    private val loginFailures = mutableStateOf(0)
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-//        viewModel.getFailedLogins().observe(this) {
-//            loginFailures.value = it
-//        }
-        viewModel.getIsUserLoggedIn().observe(this) {
-            if(it) {
-//                navigationState.value = ScreenOptions.SHOW_FEED
-            }
-        }
         viewModel.subscribeToUserListFlow()
 
         setContent {
@@ -46,94 +35,7 @@ class MainActivity : ComponentActivity() {
                 viewModel = viewModel,
                 context = this
             )
-//            when(navigationState.value) {
-//                ScreenOptions.SHOW_LOGIN -> {
-//                    ShowLogin()
-//                }
-//                ScreenOptions.SHOW_FEED -> {
-//                    ShowFeed(viewModel.getFeedPostList())
-//                }
-//                ScreenOptions.SHOW_REGISTRATION -> {
-//                    ShowRegistration()
-//                }
-//            }
 
         }
     }
-
-//    fun handleLoginClick(userName: String, password: String) {
-//        lifecycleScope.launch {
-//            if(viewModel.userAttemptLogin(userName,password)) {
-//                navigationState.value = ScreenOptions.SHOW_FEED
-//            }
-//        }
-//    }
-
-
-//    @Composable
-//    fun ShowFeed(postList: List<UserPost>) {
-//        LazyColumn {
-//            items(postList) { post ->
-//                CompositionLocalProvider(
-//                    LocalLayoutDirection provides LayoutDirection.Ltr
-//                ) {
-//                    Row {
-//                        Column(
-//                            modifier = Modifier.fillMaxWidth()
-//                        ) {
-//                            Row (
-//                                Modifier
-//                                    .fillMaxWidth()
-//                                    .padding(6.dp),
-//                                verticalAlignment = Alignment.CenterVertically,
-//                                    ){
-//                                AsyncImage(
-//                                    model = ImageRequest.Builder(LocalContext.current)
-//                                        .data(post.imageUrl.image)
-//                                        .build(),
-//                                    contentDescription = "${post.userName}Username",
-//                                    contentScale = ContentScale.Crop,
-//                                    modifier = Modifier
-//                                        .size(40.dp)
-//                                        .clip(CircleShape)
-//                                        .border(1.dp, Color.Black, CircleShape)
-//                                )
-//                                Text(
-//                                    text = post.userName,
-//                                    style = TextStyle(
-//                                        color = Color.Black,
-//                                        fontWeight = FontWeight.Bold,
-//                                    ),
-//                                    modifier = Modifier.padding(start = 6.dp)
-//                                )
-//                            }
-//                            AsyncImage(
-//                                model = ImageRequest.Builder(LocalContext.current)
-//                                    .data(post.imageUrl.image)
-//                                    .build(),
-//                                contentDescription = post.caption,
-//                                contentScale = ContentScale.Crop,
-//                                modifier = Modifier
-//                                    .fillMaxSize()
-//                                    .aspectRatio(1f)
-//                            )
-//                            Text(
-//                                buildAnnotatedString {
-//                                    withStyle(
-//                                        style = SpanStyle(
-//                                            fontWeight = FontWeight.Bold
-//                                        )
-//                                    ) {
-//                                        append(post.userName)
-//                                    }
-//                                    append(": ${post.caption}")
-//                                },
-//                                modifier = Modifier.padding(10.dp)
-//                            )
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
 }

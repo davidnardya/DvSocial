@@ -84,19 +84,14 @@ object Constants {
 //        )
 //    )
 //
-    val loggedInUser: User = User(
-        "123321",
-        "1122",
-        "MyUser",
-        listOf(
-            UserPost(
-                "1231232133333331",
-                "",
-                UserImage("",""),
-                "Look at my doggo! His name is Do-Go"
-            )
-        )
+    val emptyUser: User = User(
+        "",
+        "",
+        "",
+        emptyList()
     )
 
     const val BASE_URL = "https://dog.ceo/api/"
+    const val USER_NAME = "username"
+    const val PASSWORD = "password"
 }

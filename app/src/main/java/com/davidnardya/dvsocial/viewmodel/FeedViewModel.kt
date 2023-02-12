@@ -7,22 +7,23 @@ import com.davidnardya.dvsocial.model.User
 import com.davidnardya.dvsocial.model.UserPost
 import com.davidnardya.dvsocial.repositories.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
 class FeedViewModel @Inject constructor(private val userRepository: UserRepository) : ViewModel() {
 
-    private val isUserLoggedInLiveData: MutableLiveData<Boolean> = MutableLiveData(false)
-    private val currentUserLiveData: MutableLiveData<User> = MutableLiveData()
     private val failedLogins: MutableLiveData<Int> = MutableLiveData(0)
+    val currentUser: MutableLiveData<User> = MutableLiveData()
 
     private fun getUsersFlow(): Flow<List<User>> = userRepository.getUserListFlow()
 
-    fun getFeedPostList() : List<UserPost> {
+    fun getFeedPostList(): List<UserPost> {
         val postList = mutableListOf<UserPost>()
         getUsersFlow().onEach { userList ->
             userList.forEach { user ->
@@ -40,47 +41,33 @@ class FeedViewModel @Inject constructor(private val userRepository: UserReposito
         }
     }
 
-    fun userAttemptLogin(userName: String, password: String) {
-//        userLoggedInLiveData.value?.let {
-//            return if (userName == Constants.loggedInUser.userName && password == Constants.loggedInUser.password) {
-//                currentUserLiveData.value = Constants.loggedInUser
-//                userLoggedInLiveData.value = true
-//                it
-//            } else {
-//                userLoggedInLiveData.value = false
-//                failedLogins.value = failedLogins.value?.plus(1)
-//                it
-//            }
-//        } ?: kotlin.run {
-//            return false
-//        }
-
-        viewModelScope.launch {
-            if(
-            userRepository.getUserInfo().first == userName &&
-            userRepository.getUserInfo().second == password) {
-                isUserLoggedInLiveData.value = true
+    fun userAttemptLogin(userName: String, password: String): Boolean {
+        var result = false
+        currentUser.value?.let {
+            if (it.userName == userName && it.password == password) {
+                result = true
             }
         }
-
-//        return userRepository.getUserInfo().first == userName &&
-//                userRepository.getUserInfo().second == password
-
+        return result
     }
 
     fun registerUser(userName: String, password: String) {
         viewModelScope.launch {
-            userRepository.saveUserInfo(userName,password)
+            userRepository.saveUserInfo(userName, password)
         }
     }
 
     fun userLogOut() {
         viewModelScope.launch {
-            userRepository.saveUserInfo("","")
+            userRepository.saveUserInfo("", "")
         }
     }
 
     fun getFailedLogins(): MutableLiveData<Int> = failedLogins
-    fun getIsUserLoggedIn(): MutableLiveData<Boolean> = isUserLoggedInLiveData
 
+    suspend fun getCurrentUser(): User {
+        var user: User
+        withContext(Dispatchers.Default) { user = userRepository.getUserInfo() }
+        return user
+    }
 }

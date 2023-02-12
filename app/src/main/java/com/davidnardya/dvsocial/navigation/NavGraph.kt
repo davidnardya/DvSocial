@@ -18,10 +18,14 @@ fun SetupNavGraph(
     feedPostList: List<UserPost>,
     viewModel: FeedViewModel,
     context: Context
-    ) {
+) {
     NavHost(
         navController = navHostController,
-        startDestination = if(viewModel.getIsUserLoggedIn().value == true) Screen.Feed.route else Screen.Login.route
+        startDestination = if (viewModel.currentUser.value?.userName != "" && viewModel.currentUser.value?.password != "" ) {
+                Screen.Feed.route
+            } else {
+                Screen.Login.route
+            }
     ) {
         composable(
             route = Screen.Login.route
