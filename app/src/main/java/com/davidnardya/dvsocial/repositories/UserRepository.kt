@@ -17,10 +17,12 @@ class UserRepository @Inject constructor(
     private val userPreferencesDataStore: UserPreferencesDataStore
     ) {
     private val userList = MutableStateFlow(emptyList<User>())
+    private val currentUser = MutableStateFlow(Constants.emptyUser)
 
     private suspend fun getUserImage() = userApi.getImage()
 
     fun getUserListFlow(): Flow<List<User>> = userList
+    fun getCurrentUserFlow(): Flow<User> = currentUser
 
     private suspend fun getRandomUserPostList() : List<UserPost> {
         val randomPostList = mutableListOf<UserPost>()
@@ -36,15 +38,15 @@ class UserRepository @Inject constructor(
         return randomPostList
     }
 
-    suspend fun loadUsersToFeed() {
+    suspend fun subscribeToUserListFlow() {
         val userListToSend = mutableListOf<User>()
         for(i in 0..3) {
             userListToSend.add(
                 User(
                     userId = "${Random.nextInt(100000000,999999999)}",
-                    password = "1122",
                     userName = "${Constants.userNameList[Random.nextInt(0,4)]}${Random.nextInt(100,500)}",
 //                    userName = "${java.util.UUID.randomUUID()}",
+                    password = "1122",
                     posts = getRandomUserPostList()
                 )
             )
@@ -52,6 +54,10 @@ class UserRepository @Inject constructor(
         val oldList = userList.value.toMutableList()
         oldList.addAll(userListToSend)
         userList.tryEmit(userListToSend)
+    }
+
+    suspend fun subscribeToCurrentUserFlow() {
+        currentUser.tryEmit(getUserInfo())
     }
 
     suspend fun saveUserInfo(username: String, password: String) {
@@ -62,8 +68,8 @@ class UserRepository @Inject constructor(
     suspend fun getUserInfo(): User {
         return User(
             userId = "${Random.nextInt(100000000,999999999)}",
-            password = userPreferencesDataStore.getPreferencesDataStoreValues(PASSWORD,"").toString(),
             userName = userPreferencesDataStore.getPreferencesDataStoreValues(USER_NAME,"").toString(),
+            password = userPreferencesDataStore.getPreferencesDataStoreValues(PASSWORD,"").toString(),
             posts = emptyList()
         )
     }

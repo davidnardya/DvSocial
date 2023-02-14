@@ -1,18 +1,16 @@
 package com.davidnardya.dvsocial.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.davidnardya.dvsocial.model.User
 import com.davidnardya.dvsocial.model.UserPost
 import com.davidnardya.dvsocial.repositories.UserRepository
+import com.davidnardya.dvsocial.utils.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,6 +20,7 @@ class FeedViewModel @Inject constructor(private val userRepository: UserReposito
     val currentUser: MutableLiveData<User> = MutableLiveData()
 
     private fun getUsersFlow(): Flow<List<User>> = userRepository.getUserListFlow()
+    private fun getCurrentUserFlow(): Flow<User> = userRepository.getCurrentUserFlow()
 
     fun getFeedPostList(): List<UserPost> {
         val postList = mutableListOf<UserPost>()
@@ -35,16 +34,36 @@ class FeedViewModel @Inject constructor(private val userRepository: UserReposito
         return postList
     }
 
+    fun getCurrentUser(): User? {
+        getCurrentUserFlow().map {
+            if(
+                it.userName.isNotEmpty() && it.password.isNotEmpty() ||
+                it.userName != null && it.password != null ||
+                it.userName != "null" && it.password != "null"
+                    ) {
+                currentUser.value = it
+            }
+        }.launchIn(viewModelScope)
+        return currentUser.value
+    }
+
     fun subscribeToUserListFlow() {
         viewModelScope.launch {
-            userRepository.loadUsersToFeed()
+            userRepository.subscribeToUserListFlow()
+        }
+    }
+
+    fun subscribeToCurrentUserFlow() {
+        viewModelScope.launch {
+            userRepository.subscribeToCurrentUserFlow()
         }
     }
 
     fun userAttemptLogin(userName: String, password: String): Boolean {
         var result = false
-        currentUser.value?.let {
-            if (it.userName == userName && it.password == password) {
+        viewModelScope.launch {
+            val user = userRepository.getUserInfo()
+            if(user.userName == userName && user.password == password) {
                 result = true
             }
         }
@@ -65,9 +84,4 @@ class FeedViewModel @Inject constructor(private val userRepository: UserReposito
 
     fun getFailedLogins(): MutableLiveData<Int> = failedLogins
 
-    suspend fun getCurrentUser(): User {
-        var user: User
-        withContext(Dispatchers.Default) { user = userRepository.getUserInfo() }
-        return user
-    }
 }

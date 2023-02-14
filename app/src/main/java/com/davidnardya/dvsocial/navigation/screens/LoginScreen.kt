@@ -58,8 +58,7 @@ fun LoginScreen(navHostController: NavHostController, viewModel: FeedViewModel, 
         ) {
             Button(
                 onClick = {
-                    viewModel.userAttemptLogin(userName, password)
-//                    if(viewModel.getIsUserLoggedIn().value == true) {
+
                     if(viewModel.userAttemptLogin(userName, password)) {
                         navHostController.navigate(route = Screen.Feed.route) {
                             popUpTo(Screen.Login.route) {
@@ -67,7 +66,6 @@ fun LoginScreen(navHostController: NavHostController, viewModel: FeedViewModel, 
                             }
                         }
                     }
-                /*handleLoginClick(userName, password)*/
                 }
             ) {
                 Text(text = "Log in!")
