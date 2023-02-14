@@ -23,14 +23,14 @@ fun SetupNavGraph(
     viewModel: FeedViewModel,
     context: Context
 ) {
+    val user = viewModel.getCurrentUser()
     NavHost(
         navController = navHostController,
         startDestination =
         if(
-            viewModel.getCurrentUser()?.userName != "" && viewModel.getCurrentUser()?.password != "" ||
-            viewModel.getCurrentUser()?.userName != "null" && viewModel.getCurrentUser()?.password != "null" ||
-            viewModel.getCurrentUser()?.userName != null && viewModel.getCurrentUser()?.password != null
-                ) {
+            user?.userName != "" && user?.password != "" ||
+            user.userName != "null" && user.password != "null"
+        ) {
             Screen.Feed.route
         } else {
             Screen.Login.route

@@ -36,9 +36,9 @@ class FeedViewModel @Inject constructor(private val userRepository: UserReposito
 
     fun getCurrentUser(): User? {
         getCurrentUserFlow().map {
+            Log.d("123321","getCurrentUserFlow")
             if(
                 it.userName.isNotEmpty() && it.password.isNotEmpty() ||
-                it.userName != null && it.password != null ||
                 it.userName != "null" && it.password != "null"
                     ) {
                 currentUser.value = it

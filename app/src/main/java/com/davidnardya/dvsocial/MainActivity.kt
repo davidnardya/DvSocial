@@ -45,11 +45,13 @@ class MainActivity : ComponentActivity() {
             viewModel.currentUser.observe(this) {
                 if(
                     it.userName.isNotEmpty() && it.password.isNotEmpty() ||
-                    it.userName != null && it.password != null ||
                     it.userName != "null" && it.password != "null"
                 ) {
                     navController.navigate(route = Screen.Feed.route) {
                         popUpTo(Screen.Login.route) {
+                            inclusive = true
+                        }
+                        popUpTo(Screen.Feed.route) {
                             inclusive = true
                         }
                     }
