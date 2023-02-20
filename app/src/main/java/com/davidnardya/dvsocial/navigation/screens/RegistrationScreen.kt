@@ -72,10 +72,3 @@ fun RegistrationScreen(
         }
     }
 }
-
-//private fun handleRegistrationClick(userName: String, password: String) {
-//    viewModel.registerUser(userName, password)
-//    Toast.makeText(this, "User created!", Toast.LENGTH_SHORT).show()
-//    navigationState.value = ScreenOptions.SHOW_LOGIN
-//
-//}

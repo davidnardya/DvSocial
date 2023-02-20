@@ -7,8 +7,8 @@ import androidx.lifecycle.viewModelScope
 import com.davidnardya.dvsocial.model.User
 import com.davidnardya.dvsocial.model.UserPost
 import com.davidnardya.dvsocial.repositories.UserRepository
-import com.davidnardya.dvsocial.utils.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -18,11 +18,12 @@ class FeedViewModel @Inject constructor(private val userRepository: UserReposito
 
     private val failedLogins: MutableLiveData<Int> = MutableLiveData(0)
     val currentUser: MutableLiveData<User> = MutableLiveData()
+    val isLoadingComplete: MutableLiveData<Boolean> = MutableLiveData(false)
 
-    private fun getUsersFlow(): Flow<List<User>> = userRepository.getUserListFlow()
+    private fun getUsersFlow(): MutableStateFlow<MutableList<User>> = userRepository.getUserListFlow()
     private fun getCurrentUserFlow(): Flow<User> = userRepository.getCurrentUserFlow()
 
-    fun getFeedPostList(): List<UserPost> {
+    fun getFeedPostList(): MutableList<UserPost> {
         val postList = mutableListOf<UserPost>()
         getUsersFlow().onEach { userList ->
             userList.forEach { user ->
@@ -36,9 +37,8 @@ class FeedViewModel @Inject constructor(private val userRepository: UserReposito
 
     fun getCurrentUser(): User? {
         getCurrentUserFlow().map {
-            Log.d("123321","getCurrentUserFlow")
             if(
-                it.userName.isNotEmpty() && it.password.isNotEmpty() ||
+                it.userName.isNotEmpty() && it.password.isNotEmpty() &&
                 it.userName != "null" && it.password != "null"
                     ) {
                 currentUser.value = it
@@ -82,6 +82,21 @@ class FeedViewModel @Inject constructor(private val userRepository: UserReposito
         }
     }
 
-    fun getFailedLogins(): MutableLiveData<Int> = failedLogins
+//    fun getFailedLogins(): MutableLiveData<Int> = failedLogins
+
+    fun check() {
+        viewModelScope.launch {
+            var i = true
+            while (i) {
+                delay(1000L)
+                Log.d("123321","Delay")
+                if(getFeedPostList().isNotEmpty()) {
+                    i = false
+                    isLoadingComplete.value = true
+                    Log.d("123321","Stop")
+                }
+            }
+        }
+    }
 
 }

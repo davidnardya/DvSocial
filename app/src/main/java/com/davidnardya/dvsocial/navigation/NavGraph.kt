@@ -2,18 +2,12 @@ package com.davidnardya.dvsocial.navigation
 
 import android.content.Context
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.davidnardya.dvsocial.model.User
 import com.davidnardya.dvsocial.model.UserPost
-import com.davidnardya.dvsocial.navigation.screens.FeedScreen
-import com.davidnardya.dvsocial.navigation.screens.LoginScreen
-import com.davidnardya.dvsocial.navigation.screens.RegistrationScreen
-import com.davidnardya.dvsocial.navigation.screens.Screen
-import com.davidnardya.dvsocial.utils.Constants
+import com.davidnardya.dvsocial.navigation.screens.*
 import com.davidnardya.dvsocial.viewmodel.FeedViewModel
 
 @Composable
@@ -27,11 +21,12 @@ fun SetupNavGraph(
     NavHost(
         navController = navHostController,
         startDestination =
-        if(
-            user?.userName != "" && user?.password != "" ||
+        if (
+            user?.userName != null &&
+            user.userName != "" && user.password != "" &&
             user.userName != "null" && user.password != "null"
         ) {
-            Screen.Feed.route
+            Screen.Splash.route
         } else {
             Screen.Login.route
         }
@@ -39,7 +34,7 @@ fun SetupNavGraph(
         composable(
             route = Screen.Login.route
         ) {
-            LoginScreen(navHostController, viewModel, context)
+            LoginScreen(navHostController, viewModel)
         }
         composable(
             route = Screen.Registration.route
@@ -50,6 +45,11 @@ fun SetupNavGraph(
             route = Screen.Feed.route
         ) {
             FeedScreen(feedPostList)
+        }
+        composable(
+            route = Screen.Splash.route
+        ) {
+            SplashScreen(viewModel)
         }
     }
 }

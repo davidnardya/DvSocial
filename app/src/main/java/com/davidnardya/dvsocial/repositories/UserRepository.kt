@@ -16,12 +16,12 @@ class UserRepository @Inject constructor(
     private val userApi: UserApi,
     private val userPreferencesDataStore: UserPreferencesDataStore
     ) {
-    private val userList = MutableStateFlow(emptyList<User>())
+    private val userList = MutableStateFlow(mutableListOf<User>())
     private val currentUser = MutableStateFlow(Constants.emptyUser)
 
     private suspend fun getUserImage() = userApi.getImage()
 
-    fun getUserListFlow(): Flow<List<User>> = userList
+    fun getUserListFlow(): MutableStateFlow<MutableList<User>> = userList
     fun getCurrentUserFlow(): Flow<User> = currentUser
 
     private suspend fun getRandomUserPostList() : List<UserPost> {
