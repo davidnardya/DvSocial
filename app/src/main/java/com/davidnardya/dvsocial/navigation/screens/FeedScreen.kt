@@ -37,12 +37,12 @@ fun FeedScreen(postList: List<UserPost>) {
                     Column(
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Row (
+                        Row(
                             Modifier
                                 .fillMaxWidth()
                                 .padding(6.dp),
                             verticalAlignment = Alignment.CenterVertically,
-                        ){
+                        ) {
                             AsyncImage(
                                 model = ImageRequest.Builder(LocalContext.current)
                                     .data(post.imageUrl.image)

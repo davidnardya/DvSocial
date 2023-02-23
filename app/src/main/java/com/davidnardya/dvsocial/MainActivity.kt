@@ -24,7 +24,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewModel.userLogOut()
+//        viewModel.userLogOut()
 
         viewModel.subscribeToUserListFlow()
         viewModel.subscribeToCurrentUserFlow()
@@ -40,7 +40,7 @@ class MainActivity : ComponentActivity() {
             )
 
             viewModel.currentUser.observe(this) {
-                if(
+                if (
                     it != null &&
                     it.userName.isNotEmpty() && it.password.isNotEmpty() &&
                     it.userName != "null" && it.password != "null"
@@ -57,8 +57,8 @@ class MainActivity : ComponentActivity() {
             }
 
             viewModel.isLoadingComplete.observe(this) {
-                if(it) {
-                    navController.navigate(route = Screen.Feed.route){
+                if (it) {
+                    navController.navigate(route = Screen.Feed.route) {
                         popUpTo(Screen.Splash.route) {
                             inclusive = true
                         }
@@ -68,6 +68,7 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             }
+
         }
     }
 }

@@ -1,6 +1,5 @@
 package com.davidnardya.dvsocial.navigation.screens
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,5 +19,5 @@ fun SplashScreen(viewModel: FeedViewModel) {
         CircularProgressIndicator()
     }
 
-    viewModel.check()
+    viewModel.checkFeedPostList()
 }

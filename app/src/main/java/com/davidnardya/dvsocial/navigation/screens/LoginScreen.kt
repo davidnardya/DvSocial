@@ -57,19 +57,20 @@ fun LoginScreen(navHostController: NavHostController, viewModel: FeedViewModel) 
         ) {
             Button(
                 onClick = {
-                    if(viewModel.userAttemptLogin(userName, password)) {
+                    if (viewModel.userAttemptLogin(userName, password)) {
                         navHostController.navigate(route = Screen.Splash.route) {
                             popUpTo(Screen.Login.route) {
                                 inclusive = true
                             }
                         }
+                    } else {
+                        loginFailures.value = loginFailures.value.plus(1)
                     }
                 }
             ) {
                 Text(text = "Log in!")
             }
         }
-
     }
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -83,7 +84,6 @@ fun LoginScreen(navHostController: NavHostController, viewModel: FeedViewModel) 
             Button(
                 onClick = {
                     navHostController.navigate(route = Screen.Registration.route)
-                /*navigationState.value = ScreenOptions.SHOW_REGISTRATION*/
                 }
             ) {
                 Text(text = "Don't have a user yet? Register now!")
@@ -94,11 +94,11 @@ fun LoginScreen(navHostController: NavHostController, viewModel: FeedViewModel) 
 }
 
 @Composable
-fun handleLoginFailure(loginFailures: Int) : TextStyle {
-    return if(loginFailures in 1..3) {
+fun handleLoginFailure(loginFailures: Int): TextStyle {
+    return if (loginFailures in 1..3) {
         TextStyle(color = Color.Red)
-    } else if(loginFailures > 3) {
-        TextStyle(color = Color.Gray)
+    } else if (loginFailures > 3) {
+        TextStyle(color = Color.Red)
     } else {
         TextStyle(color = Color.Unspecified)
     }

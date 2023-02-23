@@ -16,11 +16,12 @@ import javax.inject.Inject
 @HiltViewModel
 class FeedViewModel @Inject constructor(private val userRepository: UserRepository) : ViewModel() {
 
-    private val failedLogins: MutableLiveData<Int> = MutableLiveData(0)
     val currentUser: MutableLiveData<User> = MutableLiveData()
     val isLoadingComplete: MutableLiveData<Boolean> = MutableLiveData(false)
 
-    private fun getUsersFlow(): MutableStateFlow<MutableList<User>> = userRepository.getUserListFlow()
+    private fun getUsersFlow(): MutableStateFlow<MutableList<User>> =
+        userRepository.getUserListFlow()
+
     private fun getCurrentUserFlow(): Flow<User> = userRepository.getCurrentUserFlow()
 
     fun getFeedPostList(): MutableList<UserPost> {
@@ -37,10 +38,10 @@ class FeedViewModel @Inject constructor(private val userRepository: UserReposito
 
     fun getCurrentUser(): User? {
         getCurrentUserFlow().map {
-            if(
+            if (
                 it.userName.isNotEmpty() && it.password.isNotEmpty() &&
                 it.userName != "null" && it.password != "null"
-                    ) {
+            ) {
                 currentUser.value = it
             }
         }.launchIn(viewModelScope)
@@ -63,7 +64,7 @@ class FeedViewModel @Inject constructor(private val userRepository: UserReposito
         var result = false
         viewModelScope.launch {
             val user = userRepository.getUserInfo()
-            if(user.userName == userName && user.password == password) {
+            if (user.userName != "" && user.password != "" && user.userName == userName && user.password == password) {
                 result = true
             }
         }
@@ -82,21 +83,18 @@ class FeedViewModel @Inject constructor(private val userRepository: UserReposito
         }
     }
 
-//    fun getFailedLogins(): MutableLiveData<Int> = failedLogins
-
-    fun check() {
+    fun checkFeedPostList() {
         viewModelScope.launch {
             var i = true
             while (i) {
                 delay(1000L)
-                Log.d("123321","Delay")
-                if(getFeedPostList().isNotEmpty()) {
+                Log.d("123321", "Delay")
+                if (getFeedPostList().isNotEmpty()) {
                     i = false
                     isLoadingComplete.value = true
-                    Log.d("123321","Stop")
+                    Log.d("123321", "Stop")
                 }
             }
         }
     }
-
 }
