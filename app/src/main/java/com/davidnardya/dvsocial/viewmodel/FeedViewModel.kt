@@ -1,6 +1,5 @@
 package com.davidnardya.dvsocial.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -88,11 +87,9 @@ class FeedViewModel @Inject constructor(private val userRepository: UserReposito
             var i = true
             while (i) {
                 delay(1000L)
-                Log.d("123321", "Delay")
                 if (getFeedPostList().isNotEmpty()) {
                     i = false
                     isLoadingComplete.value = true
-                    Log.d("123321", "Stop")
                 }
             }
         }
