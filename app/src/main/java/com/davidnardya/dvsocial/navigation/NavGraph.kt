@@ -52,5 +52,10 @@ fun SetupNavGraph(
         ) {
             SplashScreen(viewModel)
         }
+        composable(
+            route = Screen.Chat.route
+        ) {
+            ChatScreen()
+        }
     }
 }
