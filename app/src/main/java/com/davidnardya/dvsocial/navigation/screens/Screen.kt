@@ -6,4 +6,5 @@ sealed class Screen(val route: String) {
     object Feed: Screen("FeedScreen")
     object Splash: Screen("SplashScreen")
     object Chat: Screen("ChatScreen")
+    object ChatChannel: Screen("ChatChannelScreen")
 }

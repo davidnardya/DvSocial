@@ -12,6 +12,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.davidnardya.dvsocial.navigation.SetupNavGraph
 import com.davidnardya.dvsocial.navigation.screens.Screen
+import com.davidnardya.dvsocial.viewmodel.ChatViewModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.models.User
@@ -23,7 +24,10 @@ import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFacto
 class MainActivity : ComponentActivity() {
 
     @Inject
-    lateinit var viewModel: FeedViewModel
+    lateinit var feedViewModel: FeedViewModel
+
+    @Inject
+    lateinit var chatViewModel: ChatViewModel
 
     private lateinit var navController: NavHostController
 
@@ -36,14 +40,14 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             navController = rememberNavController()
-            val posts = remember { mutableStateListOf(viewModel.getFeedPostList()) }.first()
+            val posts = remember { mutableStateListOf(feedViewModel.getFeedPostList()) }.first()
 
             SetupNavGraph(
                 navHostController = navController,
                 feedPostList = posts,
-                viewModel = viewModel,
+                feedViewModel = feedViewModel,
+                chatViewModel = chatViewModel,
                 context = this
-
             )
         }
     }
@@ -79,7 +83,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun initObservers() {
-        viewModel.currentUser.observe(this) {
+        feedViewModel.currentUser.observe(this) {
             if (
                 it != null &&
                 it.userName.isNotEmpty() && it.password.isNotEmpty() &&
@@ -96,7 +100,7 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        viewModel.isLoadingComplete.observe(this) {
+        feedViewModel.isLoadingComplete.observe(this) {
             if (it) {
                 navController.navigate(route = Screen.Feed.route) {
                     popUpTo(Screen.Splash.route) {
@@ -111,7 +115,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun initActivity() {
-        viewModel.subscribeToUserListFlow()
-        viewModel.subscribeToCurrentUserFlow()
+        feedViewModel.subscribeToUserListFlow()
+        feedViewModel.subscribeToCurrentUserFlow()
     }
 }

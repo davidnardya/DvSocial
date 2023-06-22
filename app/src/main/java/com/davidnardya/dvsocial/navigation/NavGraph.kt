@@ -8,16 +8,18 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.davidnardya.dvsocial.model.UserPost
 import com.davidnardya.dvsocial.navigation.screens.*
+import com.davidnardya.dvsocial.viewmodel.ChatViewModel
 import com.davidnardya.dvsocial.viewmodel.FeedViewModel
 
 @Composable
 fun SetupNavGraph(
     navHostController: NavHostController,
     feedPostList: List<UserPost>,
-    viewModel: FeedViewModel,
+    feedViewModel: FeedViewModel,
+    chatViewModel: ChatViewModel,
     context: Context
 ) {
-    val user = viewModel.getCurrentUser()
+    val user = feedViewModel.getCurrentUser()
     Log.d("123321","user?.userName ${user?.userName}")
     NavHost(
         navController = navHostController,
@@ -35,27 +37,32 @@ fun SetupNavGraph(
         composable(
             route = Screen.Login.route
         ) {
-            LoginScreen(navHostController, viewModel)
+            LoginScreen(navHostController, feedViewModel)
         }
         composable(
             route = Screen.Registration.route
         ) {
-            RegistrationScreen(navHostController, viewModel, context)
+            RegistrationScreen(navHostController, feedViewModel, context)
         }
         composable(
             route = Screen.Feed.route
         ) {
-            FeedScreen(feedPostList, navHostController, viewModel)
+            FeedScreen(feedPostList, navHostController, feedViewModel)
         }
         composable(
             route = Screen.Splash.route
         ) {
-            SplashScreen(viewModel)
+            SplashScreen(feedViewModel)
         }
         composable(
             route = Screen.Chat.route
         ) {
-            ChatScreen()
+            ChatScreen(navHostController, chatViewModel)
+        }
+        composable(
+            route = Screen.ChatChannel.route
+        ) {
+            ChatChannelScreen(chatViewModel)
         }
     }
 }
