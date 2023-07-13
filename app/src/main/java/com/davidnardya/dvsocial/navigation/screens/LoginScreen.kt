@@ -69,7 +69,7 @@ fun LoginScreen(navHostController: NavHostController, viewModel: FeedViewModel) 
                     }
                 }
             ) {
-                Text(text = "Log in!")
+                Text(text = "Log in")
             }
         }
     }

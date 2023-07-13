@@ -1,5 +1,6 @@
 package com.davidnardya.dvsocial.navigation
 
+import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -39,7 +40,7 @@ fun SetupNavGraph(
         composable(
             route = Screen.Registration.route
         ) {
-            RegistrationScreen(navHostController, feedViewModel, context)
+            RegistrationScreen(navHostController, feedViewModel)
         }
         composable(
             route = Screen.Feed.route

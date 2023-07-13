@@ -121,7 +121,7 @@ dependencies {
     //Navigation
     implementation "androidx.navigation:navigation-compose:$nav_version"
 
-    //Chat
+    //Chat - https://getstream.io/
     implementation "io.getstream:stream-chat-android-compose:5.12.0"
 
     implementation "androidx.compose.material:material-icons-extended:$compose_version"

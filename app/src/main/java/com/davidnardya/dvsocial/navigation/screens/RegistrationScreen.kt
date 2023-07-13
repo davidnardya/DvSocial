@@ -65,7 +65,7 @@ fun RegistrationScreen(
                     }
                 }
             ) {
-                Text(text = "Register!")
+                Text(text = "Register")
             }
         }
     }
