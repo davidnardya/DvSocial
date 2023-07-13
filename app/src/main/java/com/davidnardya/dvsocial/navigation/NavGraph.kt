@@ -1,7 +1,5 @@
 package com.davidnardya.dvsocial.navigation
 
-import android.content.Context
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -20,7 +18,6 @@ fun SetupNavGraph(
     context: Context
 ) {
     val user = feedViewModel.getCurrentUser()
-    Log.d("123321","user?.userName ${user?.userName}")
     NavHost(
         navController = navHostController,
         startDestination =

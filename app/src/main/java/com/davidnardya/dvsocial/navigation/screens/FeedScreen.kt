@@ -1,6 +1,5 @@
 package com.davidnardya.dvsocial.navigation.screens
 
-import android.widget.Toast
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -29,12 +28,12 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.davidnardya.dvsocial.MyApp
 import com.davidnardya.dvsocial.model.UserPost
 import com.davidnardya.dvsocial.navigation.AppBar
 import com.davidnardya.dvsocial.navigation.navdrawer.DrawerBody
 import com.davidnardya.dvsocial.navigation.navdrawer.DrawerHeader
 import com.davidnardya.dvsocial.utils.Constants
+import com.davidnardya.dvsocial.utils.showToast
 import com.davidnardya.dvsocial.viewmodel.FeedViewModel
 import kotlinx.coroutines.launch
 
@@ -85,7 +84,7 @@ fun FeedScreen(
                             }
                         }
                         else -> {
-                            Toast.makeText(MyApp.instance,"${it.title} - Coming soon!",Toast.LENGTH_SHORT).show()
+                            showToast("${it.title} - Coming soon!")
                         }
                     }
                 },

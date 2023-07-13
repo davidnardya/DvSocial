@@ -4,6 +4,7 @@ import com.davidnardya.dvsocial.api.UserApi
 import com.davidnardya.dvsocial.model.User
 import com.davidnardya.dvsocial.model.UserPost
 import com.davidnardya.dvsocial.utils.Constants
+import com.davidnardya.dvsocial.utils.Constants.DID_LOG_IN
 import com.davidnardya.dvsocial.utils.Constants.PASSWORD
 import com.davidnardya.dvsocial.utils.Constants.USER_NAME
 import com.davidnardya.dvsocial.utils.UserPreferencesDataStore
@@ -72,5 +73,13 @@ class UserRepository @Inject constructor(
             password = userPreferencesDataStore.getPreferencesDataStoreValues(PASSWORD,"").toString(),
             posts = emptyList()
         )
+    }
+
+    suspend fun saveUserLoggedIn(didLogIn: Boolean) {
+        userPreferencesDataStore.savePreferencesDataStoreValues(DID_LOG_IN,didLogIn)
+    }
+
+    suspend fun getUserLoggedIn(): Boolean {
+        return userPreferencesDataStore.getPreferencesDataStoreValues(DID_LOG_IN,false) == true
     }
 }

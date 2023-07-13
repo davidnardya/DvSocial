@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.navigation.NavHostController
+import com.davidnardya.dvsocial.utils.showToast
 import com.davidnardya.dvsocial.viewmodel.FeedViewModel
 
 @Composable
@@ -98,7 +99,8 @@ fun handleLoginFailure(loginFailures: Int): TextStyle {
     return if (loginFailures in 1..3) {
         TextStyle(color = Color.Red)
     } else if (loginFailures > 3) {
-        TextStyle(color = Color.Red)
+        showToast("Wrong username or password")
+        TextStyle(color = Color.Black)
     } else {
         TextStyle(color = Color.Unspecified)
     }

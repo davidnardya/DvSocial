@@ -63,8 +63,13 @@ class FeedViewModel @Inject constructor(private val userRepository: UserReposito
         var result = false
         viewModelScope.launch {
             val user = userRepository.getUserInfo()
-            if (user.userName != "" && user.password != "" && user.userName == userName && user.password == password) {
+            if (
+                user.userName != "" && user.password != "" &&
+                user.userName == userName && user.password == password &&
+                !userRepository.getUserLoggedIn()
+            ) {
                 result = true
+                userRepository.saveUserLoggedIn(true)
             }
         }
         return result
@@ -79,6 +84,7 @@ class FeedViewModel @Inject constructor(private val userRepository: UserReposito
     fun userLogOut() {
         viewModelScope.launch {
             userRepository.saveUserInfo("", "")
+            userRepository.saveUserLoggedIn(false)
         }
     }
 

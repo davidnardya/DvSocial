@@ -35,6 +35,7 @@ object Constants {
     const val BASE_URL = "https://dog.ceo/api/"
     const val USER_NAME = "username"
     const val PASSWORD = "password"
+    const val DID_LOG_IN = "didLogIn"
 
     const val FEED_ID = "feed"
     const val FEED_TITLE = "feed"
