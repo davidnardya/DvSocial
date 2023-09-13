@@ -1,16 +1,30 @@
 package com.davidnardya.dvsocial.navigation.screens
 
+import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Comment
+import androidx.compose.material.icons.filled.InsertComment
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.ThumbUp
+import androidx.compose.material.icons.filled.ThumbUpOffAlt
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -69,9 +83,11 @@ fun FeedScreen(
                                 scaffoldState.drawerState.close()
                             }
                         }
+
                         Constants.CHAT_ID -> {
                             navController.navigate(route = Screen.Chat.route)
                         }
+
                         Constants.LOGOUT_ID -> {
                             viewModel.userLogOut()
                             navController.navigate(route = Screen.Login.route) {
@@ -83,6 +99,7 @@ fun FeedScreen(
                                 }
                             }
                         }
+
                         else -> {
                             showToast("${it.title} - Coming soon!")
                         }
@@ -93,15 +110,19 @@ fun FeedScreen(
         },
         content = { paddingValues ->
             Modifier.padding(paddingValues)
-            PopulateFeedContent(postList)
+            PopulateFeedContent(postList, navController, viewModel)
         }
     )
 }
 
 @Composable
-private fun PopulateFeedContent(postList: List<UserPost>) {
+private fun PopulateFeedContent(postList: List<UserPost>, navController: NavHostController, viewModel: FeedViewModel) {
     LazyColumn {
         items(postList) { post ->
+
+            var likes by rememberSaveable {
+                mutableStateOf(post.likes)
+            }
             CompositionLocalProvider(
                 LocalLayoutDirection provides LayoutDirection.Ltr
             ) {
@@ -158,9 +179,67 @@ private fun PopulateFeedContent(postList: List<UserPost>) {
                             },
                             modifier = Modifier.padding(10.dp)
                         )
+                        Row(
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(6.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            CreateLikeButton(post, likes, onLikesChange = { likes = it })
+                            IconButton(
+                                onClick = {
+                                    navController.navigate(route = Screen.PostComments.route)
+                                    viewModel.currentPost.value = post
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.Comment,
+                                    contentDescription = "${post.postId} Comments Icon"
+                                )
+                            }
+                            IconButton(
+                                onClick = { /*TODO*/ }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.Share,
+                                    contentDescription = "${post.postId} Share Icon"
+                                )
+                            }
+                        }
+                        Text(
+                            text = "$likes likes",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(6.dp)
+                        )
                     }
                 }
             }
         }
+    }
+}
+
+@Composable
+fun CreateLikeButton(post: UserPost, likes: Int, onLikesChange: (Int) -> Unit) {
+    var icon by rememberSaveable {
+        mutableStateOf(post.isLiked)
+    }
+    IconButton(
+        onClick = {
+            icon = !icon
+            post.isLiked = icon
+            if (post.isLiked) {
+                onLikesChange(likes.plus(1))
+                post.likes = likes
+            } else {
+                onLikesChange(likes.minus(1))
+                post.likes = likes
+            }
+        }
+    ) {
+        Icon(
+            imageVector = if (icon) Icons.Filled.ThumbUp else Icons.Filled.ThumbUpOffAlt,
+            contentDescription = "${post.postId} Likes Icon"
+        )
     }
 }

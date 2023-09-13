@@ -33,7 +33,8 @@ class UserRepository @Inject constructor(
                 postId = "${Random.nextInt(100000000,999999999)}",
                 userName = "${Constants.userNameList[Random.nextInt(0,4)]}${Random.nextInt(100,500)}",
                 imageUrl = getUserImage(),
-                Constants.userImageCaptionList[Random.nextInt(0,5)]
+                Constants.userImageCaptionList[Random.nextInt(0,5)],
+                comments = null
             ))
         }
         return randomPostList

@@ -62,5 +62,10 @@ fun SetupNavGraph(
         ) {
             ChatChannelScreen(chatViewModel)
         }
+        composable(
+            route = Screen.PostComments.route
+        ) {
+            PostCommentsScreen(feedViewModel)
+        }
     }
 }

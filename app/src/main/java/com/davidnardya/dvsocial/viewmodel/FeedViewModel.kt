@@ -17,6 +17,7 @@ class FeedViewModel @Inject constructor(private val userRepository: UserReposito
 
     val currentUser: MutableLiveData<User> = MutableLiveData()
     val isLoadingComplete: MutableLiveData<Boolean> = MutableLiveData(false)
+    val currentPost: MutableLiveData<UserPost> = MutableLiveData()
 
     private fun getUsersFlow(): MutableStateFlow<MutableList<User>> =
         userRepository.getUserListFlow()
