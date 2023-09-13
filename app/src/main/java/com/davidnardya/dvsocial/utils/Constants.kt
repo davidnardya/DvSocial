@@ -3,6 +3,7 @@ package com.davidnardya.dvsocial.utils
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import com.davidnardya.dvsocial.model.User
+import com.davidnardya.dvsocial.model.UserComment
 import com.davidnardya.dvsocial.navigation.navdrawer.MenuItem
 
 
@@ -38,7 +39,7 @@ object Constants {
     const val DID_LOG_IN = "didLogIn"
 
     const val FEED_ID = "feed"
-    const val FEED_TITLE = "feed"
+    const val FEED_TITLE = "Feed"
     const val CHAT_ID = "chat"
     const val CHAT_TITLE = "Chat"
     const val SETTINGS_ID = "settings"
@@ -67,5 +68,84 @@ object Constants {
             LOGOUT_TITLE,
             Icons.Default.ExitToApp
         )
+    )
+
+    private val commentsListOne = listOf(
+        UserComment(
+            "1111",
+            "this is a text for a short comment",
+            true,
+            0
+        ),
+        UserComment(
+            "1112",
+            "this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment ",
+            false,
+            4
+        ),
+        UserComment(
+            "1113",
+            "this is a text for a short comment",
+            false,
+            1
+        ),
+        UserComment(
+            "1114",
+            "this is a text for a short comment",
+            false,
+            10
+        ),
+        UserComment(
+            "1115",
+            "this is a text for a short comment",
+            true,
+            0
+        ),
+        UserComment(
+            "1116",
+            "this is a text for a short comment",
+            false,
+            0
+        ),
+    )
+
+    private val commentsListTwo = listOf(
+        UserComment(
+            "1111",
+            "this is a text for a short comment",
+            false,
+            0
+        )
+    )
+
+    private val commentsListThree = listOf(
+        UserComment(
+            "1115",
+            "this is a text for a short comment",
+            false,
+            9
+        ),
+        UserComment(
+            "1112",
+            "this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment ",
+            false,
+            1
+        ),
+        UserComment(
+            "1113",
+            "this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment ",
+            true,
+            5
+        ),
+        UserComment(
+            "1114",
+            "this is a text for a short comment",
+            false,
+            0
+        )
+    )
+
+    val mockComments = listOf(
+        commentsListOne, commentsListTwo, commentsListThree, null
     )
 }

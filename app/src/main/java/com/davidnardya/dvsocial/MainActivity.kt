@@ -3,8 +3,11 @@ package com.davidnardya.dvsocial
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection
 import com.davidnardya.dvsocial.viewmodel.FeedViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -42,13 +45,17 @@ class MainActivity : ComponentActivity() {
             navController = rememberNavController()
             val posts = remember { mutableStateListOf(feedViewModel.getFeedPostList()) }.first()
 
-            SetupNavGraph(
-                navHostController = navController,
-                feedPostList = posts,
-                feedViewModel = feedViewModel,
-                chatViewModel = chatViewModel,
-                context = this
-            )
+            CompositionLocalProvider(
+                LocalLayoutDirection provides LayoutDirection.Ltr
+            ) {
+                SetupNavGraph(
+                    navHostController = navController,
+                    feedPostList = posts,
+                    feedViewModel = feedViewModel,
+                    chatViewModel = chatViewModel,
+                    context = this
+                )
+            }
         }
     }
 

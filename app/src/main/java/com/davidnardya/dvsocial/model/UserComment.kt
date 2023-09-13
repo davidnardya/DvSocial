@@ -1,7 +1,8 @@
 package com.davidnardya.dvsocial.model
 
 data class UserComment(
-    val id: Int,
-    val text: String,
-    var isLiked: Boolean = false
-)
+    override val id: String?,
+    val text: String?,
+    override var isLiked: Boolean?,
+    override var likes: Int?,
+) : Likeable

@@ -30,11 +30,11 @@ class UserRepository @Inject constructor(
 
         for (i in 0..3) {
             randomPostList.add(UserPost(
-                postId = "${Random.nextInt(100000000,999999999)}",
+                id = "${Random.nextInt(100000000,999999999)}",
                 userName = "${Constants.userNameList[Random.nextInt(0,4)]}${Random.nextInt(100,500)}",
                 imageUrl = getUserImage(),
-                Constants.userImageCaptionList[Random.nextInt(0,5)],
-                comments = null
+                caption = Constants.userImageCaptionList[Random.nextInt(0,5)],
+                comments = Constants.mockComments[Random.nextInt(0,3)]
             ))
         }
         return randomPostList

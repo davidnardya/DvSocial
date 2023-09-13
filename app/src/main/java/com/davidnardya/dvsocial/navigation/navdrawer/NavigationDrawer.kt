@@ -20,7 +20,7 @@ fun DrawerHeader() {
            .padding(vertical = 64.dp),
         contentAlignment = Alignment.Center
     ) {
-        Text(text = "Hello", fontSize = 40.sp)
+        Text(text = "DvSocial", fontSize = 40.sp)
     }
 }
 
