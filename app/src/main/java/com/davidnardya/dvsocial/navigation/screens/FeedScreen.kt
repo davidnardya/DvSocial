@@ -8,6 +8,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
+import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddBox
@@ -46,6 +47,7 @@ import com.davidnardya.dvsocial.utils.Constants
 import com.davidnardya.dvsocial.utils.showLikesText
 import com.davidnardya.dvsocial.utils.showToast
 import com.davidnardya.dvsocial.viewmodel.FeedViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
@@ -71,39 +73,7 @@ fun FeedScreen(
         drawerGesturesEnabled = scaffoldState.drawerState.isOpen,
         drawerContent = {
             DrawerHeader()
-            DrawerBody(
-                items = Constants.menuList,
-                onItemClick = {
-                    when (it.id) {
-                        Constants.FEED_ID -> {
-                            scope.launch {
-                                scaffoldState.drawerState.close()
-                            }
-                        }
-
-                        Constants.CHAT_ID -> {
-                            navController.navigate(route = Screen.Chat.route)
-                        }
-
-                        Constants.LOGOUT_ID -> {
-                            viewModel.userLogOut()
-                            navController.navigate(route = Screen.Login.route) {
-                                popUpTo(Screen.Feed.route) {
-                                    inclusive = true
-                                }
-                                popUpTo(Screen.Feed.route) {
-                                    inclusive = true
-                                }
-                            }
-                        }
-
-                        else -> {
-                            showToast("${it.title} - Coming soon!")
-                        }
-                    }
-                },
-                modifier = Modifier.fillMaxWidth()
-            )
+            SetDrawerBody(navController, scope, scaffoldState, viewModel)
         },
         content = { paddingValues ->
             Modifier.padding(paddingValues)
@@ -127,7 +97,7 @@ private fun PopulateFeedContent(
             }
             Column {
                 if (index == 0) {
-                    SetHeader(post)
+                    SetHeader(post, navController)
                 }
                 Row(
                     Modifier
@@ -242,25 +212,83 @@ fun CreateLikeButton(likeable: Likeable, likes: Int, onLikesChange: (Int) -> Uni
 }
 
 @Composable
-fun SetHeader(likeable: Likeable) {
+fun SetHeader(likeable: Likeable, navController: NavHostController) {
     IconButton(
         modifier = Modifier
             .fillMaxWidth()
             .padding(6.dp),
-        onClick = { /*TODO*/ }
+        onClick = {
+            navController.navigate(
+                if (likeable is UserPost) {
+                    Screen.Post.route
+                } else {
+                    Screen.Comment.route
+                }
+            )
+        }
     ) {
-        Row (
+        Row(
             verticalAlignment = Alignment.CenterVertically
-        ){
+        ) {
             Icon(
                 imageVector = Icons.Filled.AddBox,
                 contentDescription = "Feed Header"
             )
             Text(
-                text = if(likeable is UserPost)"Create a new post" else "Add a new comment",
+                text = if (likeable is UserPost) "Create a new post" else "Add a new comment",
                 modifier = Modifier
                     .padding(6.dp)
             )
         }
     }
+}
+
+@Composable
+private fun SetDrawerBody(
+    navController: NavHostController,
+    scope: CoroutineScope,
+    scaffoldState: ScaffoldState,
+    viewModel: FeedViewModel
+) {
+    DrawerBody(
+        items = Constants.menuList,
+        onItemClick = {
+            when (it.id) {
+                Constants.USER_PROFILE_ID -> {
+                    navController.navigate(Screen.UserProfile.route)
+                }
+
+                Constants.NOTIFICATIONS_ID -> {
+                    navController.navigate(Screen.Notifications.route)
+                }
+
+                Constants.FEED_ID -> {
+                    scope.launch {
+                        scaffoldState.drawerState.close()
+                    }
+                }
+
+                Constants.CHAT_ID -> {
+                    navController.navigate(route = Screen.Chat.route)
+                }
+
+                Constants.LOGOUT_ID -> {
+                    viewModel.userLogOut()
+                    navController.navigate(route = Screen.Login.route) {
+                        popUpTo(Screen.Feed.route) {
+                            inclusive = true
+                        }
+                        popUpTo(Screen.Feed.route) {
+                            inclusive = true
+                        }
+                    }
+                }
+
+                else -> {
+                    showToast("${it.title} - Coming soon!")
+                }
+            }
+        },
+        modifier = Modifier.fillMaxWidth()
+    )
 }

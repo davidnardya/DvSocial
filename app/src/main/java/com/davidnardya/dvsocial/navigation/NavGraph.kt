@@ -65,7 +65,27 @@ fun SetupNavGraph(
         composable(
             route = Screen.PostComments.route
         ) {
-            PostCommentsScreen(feedViewModel)
+            PostCommentsScreen(feedViewModel, navHostController)
+        }
+        composable(
+            route = Screen.UserProfile.route
+        ) {
+            UserProfileScreen(feedViewModel, navHostController)
+        }
+        composable(
+            route = Screen.Notifications.route
+        ) {
+            NotificationsScreen()
+        }
+        composable(
+            route = Screen.Post.route
+        ) {
+            PostScreen()
+        }
+        composable(
+            route = Screen.Comment.route
+        ) {
+            CommentScreen()
         }
     }
 }

@@ -18,11 +18,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.davidnardya.dvsocial.utils.showLikesText
 import com.davidnardya.dvsocial.viewmodel.FeedViewModel
 
 @Composable
-fun PostCommentsScreen(viewModel: FeedViewModel) {
+fun PostCommentsScreen(viewModel: FeedViewModel, navController: NavHostController) {
     val commentsList = viewModel.currentPost.value?.comments
 
     commentsList?.let { list ->
@@ -32,7 +33,7 @@ fun PostCommentsScreen(viewModel: FeedViewModel) {
                     mutableStateOf(comment.likes ?: 0)
                 }
                 if(index == 0) {
-                    SetHeader(likeable = comment)
+                    SetHeader(likeable = comment, navController = navController)
                 }
 
                 Text(

@@ -38,6 +38,10 @@ object Constants {
     const val PASSWORD = "password"
     const val DID_LOG_IN = "didLogIn"
 
+    const val USER_PROFILE_ID = "user_profile"
+    const val USER_PROFILE_TITLE = "My Profile"
+    const val NOTIFICATIONS_ID = "notifications"
+    const val NOTIFICATIONS_TITLE = "Notifications"
     const val FEED_ID = "feed"
     const val FEED_TITLE = "Feed"
     const val CHAT_ID = "chat"
@@ -48,6 +52,16 @@ object Constants {
     const val LOGOUT_TITLE = "Log Out"
 
     val menuList = listOf(
+        MenuItem(
+            USER_PROFILE_ID,
+            USER_PROFILE_TITLE,
+            Icons.Default.Person
+        ),
+        MenuItem(
+            NOTIFICATIONS_ID,
+            NOTIFICATIONS_TITLE,
+            Icons.Default.Notifications
+        ),
         MenuItem(
             FEED_ID,
             FEED_TITLE,

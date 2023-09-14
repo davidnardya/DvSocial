@@ -47,7 +47,6 @@ class UserRepository @Inject constructor(
                 User(
                     userId = "${Random.nextInt(100000000,999999999)}",
                     userName = "${Constants.userNameList[Random.nextInt(0,4)]}${Random.nextInt(100,500)}",
-//                    userName = "${java.util.UUID.randomUUID()}",
                     password = "1122",
                     posts = getRandomUserPostList()
                 )
