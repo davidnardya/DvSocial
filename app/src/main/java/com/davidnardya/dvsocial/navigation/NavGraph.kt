@@ -75,7 +75,7 @@ fun SetupNavGraph(
         composable(
             route = Screen.Notifications.route
         ) {
-            NotificationsScreen()
+            NotificationsScreen(feedViewModel, navHostController)
         }
         composable(
             route = Screen.Post.route

@@ -83,14 +83,12 @@ fun FeedScreen(
 }
 
 @Composable
-private fun PopulateFeedContent(
+fun PopulateFeedContent(
     postList: List<UserPost>,
     navController: NavHostController,
     viewModel: FeedViewModel
 ) {
-    LazyColumn(
-        modifier = Modifier
-    ) {
+    LazyColumn {
         itemsIndexed(postList) { index, post ->
             var likes by rememberSaveable {
                 mutableStateOf(post.likes ?: 0)

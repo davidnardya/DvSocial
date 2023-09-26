@@ -25,7 +25,7 @@ class UserRepository @Inject constructor(
     fun getUserListFlow(): MutableStateFlow<MutableList<User>> = userList
     fun getCurrentUserFlow(): Flow<User> = currentUser
 
-    private suspend fun getRandomUserPostList() : List<UserPost> {
+    private suspend fun getRandomFeedUserPostList() : List<UserPost> {
         val randomPostList = mutableListOf<UserPost>()
 
         for (i in 0..3) {
@@ -48,7 +48,8 @@ class UserRepository @Inject constructor(
                     userId = "${Random.nextInt(100000000,999999999)}",
                     userName = "${Constants.userNameList[Random.nextInt(0,4)]}${Random.nextInt(100,500)}",
                     password = "1122",
-                    posts = getRandomUserPostList()
+                    posts = getRandomFeedUserPostList(),
+                    notifications = Constants.mockNotifications
                 )
             )
         }
@@ -71,7 +72,8 @@ class UserRepository @Inject constructor(
             userId = "${Random.nextInt(100000000,999999999)}",
             userName = userPreferencesDataStore.getPreferencesDataStoreValues(USER_NAME,"").toString(),
             password = userPreferencesDataStore.getPreferencesDataStoreValues(PASSWORD,"").toString(),
-            posts = emptyList()
+            posts = getRandomFeedUserPostList(),
+            notifications = Constants.mockNotifications
         )
     }
 

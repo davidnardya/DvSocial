@@ -4,6 +4,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import com.davidnardya.dvsocial.model.User
 import com.davidnardya.dvsocial.model.UserComment
+import com.davidnardya.dvsocial.model.UserNotification
 import com.davidnardya.dvsocial.navigation.navdrawer.MenuItem
 
 
@@ -30,6 +31,7 @@ object Constants {
         "",
         "",
         "",
+        emptyList(),
         emptyList()
     )
 
@@ -161,5 +163,28 @@ object Constants {
 
     val mockComments = listOf(
         commentsListOne, commentsListTwo, commentsListThree, null
+    )
+
+    val mockNotifications = listOf(
+        UserNotification(
+            "1",
+            "Someone liked your post!"
+        ),
+        UserNotification(
+            "2",
+            "Someone liked your comment!"
+        ),
+        UserNotification(
+            "3",
+            "Someone shared your post!"
+        ),
+        UserNotification(
+            "4",
+            "Someone liked your comment!"
+        ),
+        UserNotification(
+            "5",
+            "Someone liked your post!"
+        )
     )
 }

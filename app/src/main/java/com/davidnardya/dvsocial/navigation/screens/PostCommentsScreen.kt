@@ -16,6 +16,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -35,7 +38,14 @@ fun PostCommentsScreen(viewModel: FeedViewModel, navController: NavHostControlle
                 if(index == 0) {
                     SetHeader(likeable = comment, navController = navController)
                 }
-
+                Text(
+                    modifier = Modifier.padding(6.dp),
+                    text = "username",
+                    style = TextStyle(
+                        color = Color.Black,
+                        fontWeight = FontWeight.Bold
+                    )
+                )
                 Text(
                     modifier = Modifier.padding(6.dp),
                     text = comment.text ?: ""
