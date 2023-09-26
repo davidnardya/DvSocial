@@ -1,6 +1,7 @@
 package com.davidnardya.dvsocial
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.CompositionLocalProvider
@@ -18,6 +19,7 @@ import com.davidnardya.dvsocial.navigation.screens.Screen
 import com.davidnardya.dvsocial.viewmodel.ChatViewModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogLevel
+import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.model.message.attachments.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.plugin.configuration.Config
@@ -87,6 +89,21 @@ class MainActivity : ComponentActivity() {
             user = user,
             token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoidHV0b3JpYWwtZHJvaWQifQ.NhEr0hP9W9nwqV7ZkdShxvi02C5PR7SJE7Cs4y7kyqg"
         ).enqueue()
+
+        // Creating a channel
+        val channelClient = client.channel(channelType = "messaging", channelId = "general")
+
+        val extraData = mutableMapOf<String, Any>(
+            "name" to "Awesome channel about food"
+        )
+        channelClient.create(memberIds = emptyList(), extraData = extraData).enqueue() { result ->
+            if (result.isSuccess) {
+                val channel: Channel = result.data()
+            } else {
+                Log.d("ChannelError", "Something went wrong creating a channel")
+            }
+        }
+
     }
 
     private fun initObservers() {

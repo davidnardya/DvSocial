@@ -1,7 +1,7 @@
 package com.davidnardya.dvsocial.repositories
 
 import com.davidnardya.dvsocial.api.UserApi
-import com.davidnardya.dvsocial.model.User
+import com.davidnardya.dvsocial.model.DvUser
 import com.davidnardya.dvsocial.model.UserPost
 import com.davidnardya.dvsocial.utils.Constants
 import com.davidnardya.dvsocial.utils.Constants.DID_LOG_IN
@@ -17,13 +17,13 @@ class UserRepository @Inject constructor(
     private val userApi: UserApi,
     private val userPreferencesDataStore: UserPreferencesDataStore
     ) {
-    private val userList = MutableStateFlow(mutableListOf<User>())
+    private val userList = MutableStateFlow(mutableListOf<DvUser>())
     private val currentUser = MutableStateFlow(Constants.emptyUser)
 
     private suspend fun getUserImage() = userApi.getImage()
 
-    fun getUserListFlow(): MutableStateFlow<MutableList<User>> = userList
-    fun getCurrentUserFlow(): Flow<User> = currentUser
+    fun getUserListFlow(): MutableStateFlow<MutableList<DvUser>> = userList
+    fun getCurrentUserFlow(): Flow<DvUser> = currentUser
 
     private suspend fun getRandomFeedUserPostList() : List<UserPost> {
         val randomPostList = mutableListOf<UserPost>()
@@ -41,10 +41,10 @@ class UserRepository @Inject constructor(
     }
 
     suspend fun subscribeToUserListFlow() {
-        val userListToSend = mutableListOf<User>()
+        val userListToSend = mutableListOf<DvUser>()
         for(i in 0..3) {
             userListToSend.add(
-                User(
+                DvUser(
                     userId = "${Random.nextInt(100000000,999999999)}",
                     userName = "${Constants.userNameList[Random.nextInt(0,4)]}${Random.nextInt(100,500)}",
                     password = "1122",
@@ -67,8 +67,8 @@ class UserRepository @Inject constructor(
         userPreferencesDataStore.savePreferencesDataStoreValues(PASSWORD,password)
     }
 
-    suspend fun getUserInfo(): User {
-        return User(
+    suspend fun getUserInfo(): DvUser {
+        return DvUser(
             userId = "${Random.nextInt(100000000,999999999)}",
             userName = userPreferencesDataStore.getPreferencesDataStoreValues(USER_NAME,"").toString(),
             password = userPreferencesDataStore.getPreferencesDataStoreValues(PASSWORD,"").toString(),

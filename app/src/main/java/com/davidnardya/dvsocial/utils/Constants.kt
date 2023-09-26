@@ -2,7 +2,7 @@ package com.davidnardya.dvsocial.utils
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
-import com.davidnardya.dvsocial.model.User
+import com.davidnardya.dvsocial.model.DvUser
 import com.davidnardya.dvsocial.model.UserComment
 import com.davidnardya.dvsocial.model.UserNotification
 import com.davidnardya.dvsocial.navigation.navdrawer.MenuItem
@@ -27,7 +27,7 @@ object Constants {
         "Look at my doggo! His name is Do-go-go"
     )
 
-    val emptyUser: User = User(
+    val emptyUser: DvUser = DvUser(
         "",
         "",
         "",

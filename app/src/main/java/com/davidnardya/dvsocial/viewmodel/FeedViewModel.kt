@@ -3,7 +3,7 @@ package com.davidnardya.dvsocial.viewmodel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.davidnardya.dvsocial.model.User
+import com.davidnardya.dvsocial.model.DvUser
 import com.davidnardya.dvsocial.model.UserPost
 import com.davidnardya.dvsocial.repositories.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,14 +15,14 @@ import javax.inject.Inject
 @HiltViewModel
 class FeedViewModel @Inject constructor(private val userRepository: UserRepository) : ViewModel() {
 
-    val currentUser: MutableLiveData<User> = MutableLiveData()
+    val currentUser: MutableLiveData<DvUser> = MutableLiveData()
     val isLoadingComplete: MutableLiveData<Boolean> = MutableLiveData(false)
     val currentPost: MutableLiveData<UserPost> = MutableLiveData()
 
-    private fun getUsersFlow(): MutableStateFlow<MutableList<User>> =
+    private fun getUsersFlow(): MutableStateFlow<MutableList<DvUser>> =
         userRepository.getUserListFlow()
 
-    private fun getCurrentUserFlow(): Flow<User> = userRepository.getCurrentUserFlow()
+    private fun getCurrentUserFlow(): Flow<DvUser> = userRepository.getCurrentUserFlow()
 
     fun getFeedPostList(): MutableList<UserPost> {
         val postList = mutableListOf<UserPost>()
@@ -36,7 +36,7 @@ class FeedViewModel @Inject constructor(private val userRepository: UserReposito
         return postList
     }
 
-    fun getCurrentUser(): User? {
+    fun getCurrentUser(): DvUser? {
         getCurrentUserFlow().map {
             if (
                 it.userName.isNotEmpty() && it.password.isNotEmpty() &&
