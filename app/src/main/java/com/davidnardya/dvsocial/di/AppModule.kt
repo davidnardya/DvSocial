@@ -6,7 +6,6 @@ import com.davidnardya.dvsocial.api.createRetrofitInstance
 import com.davidnardya.dvsocial.repositories.UserRepository
 import com.davidnardya.dvsocial.utils.Constants
 import com.davidnardya.dvsocial.utils.UserPreferencesDataStore
-import com.davidnardya.dvsocial.viewmodel.ChatViewModel
 import com.davidnardya.dvsocial.viewmodel.FeedViewModel
 import dagger.Module
 import dagger.Provides
@@ -39,9 +38,4 @@ object AppModule {
         userApi: UserApi,
         userPreferencesDataStore: UserPreferencesDataStore
     ) = UserRepository(userApi, userPreferencesDataStore)
-
-    @Singleton
-    @Provides
-    fun provideChatViewModel() = ChatViewModel()
-
 }

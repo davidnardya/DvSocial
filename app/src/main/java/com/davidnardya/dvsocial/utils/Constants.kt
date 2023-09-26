@@ -46,8 +46,6 @@ object Constants {
     const val NOTIFICATIONS_TITLE = "Notifications"
     const val FEED_ID = "feed"
     const val FEED_TITLE = "Feed"
-    const val CHAT_ID = "chat"
-    const val CHAT_TITLE = "Chat"
     const val SETTINGS_ID = "settings"
     const val SETTINGS_TITLE = "Settings"
     const val LOGOUT_ID = "logout"
@@ -68,11 +66,6 @@ object Constants {
             FEED_ID,
             FEED_TITLE,
             Icons.Default.Home
-        ),
-        MenuItem(
-            CHAT_ID,
-            CHAT_TITLE,
-            Icons.Default.Email
         ),
         MenuItem(
             SETTINGS_ID,

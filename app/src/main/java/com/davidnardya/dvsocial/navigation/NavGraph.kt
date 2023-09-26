@@ -7,7 +7,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.davidnardya.dvsocial.model.UserPost
 import com.davidnardya.dvsocial.navigation.screens.*
-import com.davidnardya.dvsocial.viewmodel.ChatViewModel
 import com.davidnardya.dvsocial.viewmodel.FeedViewModel
 
 @Composable
@@ -15,7 +14,6 @@ fun SetupNavGraph(
     navHostController: NavHostController,
     feedPostList: List<UserPost>,
     feedViewModel: FeedViewModel,
-    chatViewModel: ChatViewModel,
     context: Context
 ) {
     val user = feedViewModel.getCurrentUser()
@@ -51,16 +49,6 @@ fun SetupNavGraph(
             route = Screen.Splash.route
         ) {
             SplashScreen(feedViewModel)
-        }
-        composable(
-            route = Screen.Chat.route
-        ) {
-            ChatScreen(navHostController, chatViewModel)
-        }
-        composable(
-            route = Screen.ChatChannel.route
-        ) {
-            ChatChannelScreen(chatViewModel)
         }
         composable(
             route = Screen.PostComments.route

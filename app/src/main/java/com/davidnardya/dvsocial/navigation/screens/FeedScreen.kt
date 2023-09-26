@@ -266,10 +266,6 @@ private fun SetDrawerBody(
                     }
                 }
 
-                Constants.CHAT_ID -> {
-                    navController.navigate(route = Screen.Chat.route)
-                }
-
                 Constants.LOGOUT_ID -> {
                     viewModel.userLogOut()
                     navController.navigate(route = Screen.Login.route) {
