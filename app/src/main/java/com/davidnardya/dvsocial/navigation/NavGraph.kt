@@ -73,7 +73,7 @@ fun SetupNavGraph(
         composable(
             route = Screen.Comment.route
         ) {
-            CommentScreen()
+            CommentScreen(feedViewModel, navHostController)
         }
     }
 }

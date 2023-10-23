@@ -156,7 +156,7 @@ fun PopulateFeedContent(
                     IconButton(
                         onClick = {
                             navController.navigate(route = Screen.PostComments.route)
-                            viewModel.currentPost.value = post
+                            viewModel.currentPostState.value = post
                         }
                     ) {
                         Icon(

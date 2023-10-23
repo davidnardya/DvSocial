@@ -5,6 +5,7 @@ import androidx.compose.material.icons.filled.*
 import com.davidnardya.dvsocial.model.DvUser
 import com.davidnardya.dvsocial.model.UserComment
 import com.davidnardya.dvsocial.model.UserNotification
+import com.davidnardya.dvsocial.model.UserPost
 import com.davidnardya.dvsocial.navigation.navdrawer.MenuItem
 
 
@@ -50,6 +51,7 @@ object Constants {
     const val SETTINGS_TITLE = "Settings"
     const val LOGOUT_ID = "logout"
     const val LOGOUT_TITLE = "Log Out"
+    const val MAX_COMMENT_LENGTH = 200
 
     val menuList = listOf(
         MenuItem(
@@ -79,7 +81,7 @@ object Constants {
         )
     )
 
-    private val commentsListOne = listOf(
+    val commentsListOne = listOf(
         UserComment(
             "1111",
             "this is a text for a short comment",

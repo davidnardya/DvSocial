@@ -1,11 +1,13 @@
 package com.davidnardya.dvsocial.viewmodel
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.davidnardya.dvsocial.model.DvUser
 import com.davidnardya.dvsocial.model.UserPost
 import com.davidnardya.dvsocial.repositories.UserRepository
+import com.davidnardya.dvsocial.utils.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
@@ -17,7 +19,7 @@ class FeedViewModel @Inject constructor(private val userRepository: UserReposito
 
     val currentUser: MutableLiveData<DvUser> = MutableLiveData()
     val isLoadingComplete: MutableLiveData<Boolean> = MutableLiveData(false)
-    val currentPost: MutableLiveData<UserPost> = MutableLiveData()
+    val currentPostState = mutableStateOf(UserPost(comments = Constants.commentsListOne))
 
     private fun getUsersFlow(): MutableStateFlow<MutableList<DvUser>> =
         userRepository.getUserListFlow()

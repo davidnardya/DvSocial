@@ -27,7 +27,7 @@ import com.davidnardya.dvsocial.viewmodel.FeedViewModel
 
 @Composable
 fun PostCommentsScreen(viewModel: FeedViewModel, navController: NavHostController) {
-    val commentsList = viewModel.currentPost.value?.comments
+    val commentsList = viewModel.currentPostState.value.comments
 
     commentsList?.let { list ->
         LazyColumn(modifier = Modifier.fillMaxWidth()) {
