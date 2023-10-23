@@ -71,6 +71,7 @@ class UserRepository @Inject constructor(
     suspend fun clearDataStore() {
         userPreferencesDataStore.removeKey(USER_NAME)
         userPreferencesDataStore.removeKey(PASSWORD)
+        userPreferencesDataStore.removeKey(DID_LOG_IN)
         userPreferencesDataStore.clear()
     }
 

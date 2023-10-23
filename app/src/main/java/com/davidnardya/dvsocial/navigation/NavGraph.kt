@@ -22,8 +22,8 @@ fun SetupNavGraph(
         startDestination =
         if (
             user?.userName != null &&
-            user.userName != "" && user.password != "" /*&&
-            user.userName != "null" && user.password != "null"*/
+            user.userName != "" && user.password != "" &&
+            user.userName != "null" && user.password != "null"
         ) {
             Screen.Splash.route
         } else {

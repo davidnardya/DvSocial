@@ -8,6 +8,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.lifecycle.lifecycleScope
 import com.davidnardya.dvsocial.viewmodel.FeedViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -15,6 +16,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.davidnardya.dvsocial.navigation.SetupNavGraph
 import com.davidnardya.dvsocial.navigation.screens.Screen
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -26,7 +28,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         initActivity()
         initObservers()
 
@@ -54,12 +55,16 @@ class MainActivity : ComponentActivity() {
                 it.userName.isNotEmpty() && it.password.isNotEmpty() &&
                 it.userName != "null" && it.password != "null"
             ) {
-                navController.navigate(route = Screen.Splash.route) {
-                    popUpTo(Screen.Login.route) {
-                        inclusive = true
-                    }
-                    popUpTo(Screen.Splash.route) {
-                        inclusive = true
+                lifecycleScope.launch {
+                    if(feedViewModel.getUserLoggedIn()) {
+                        navController.navigate(route = Screen.Splash.route) {
+                            popUpTo(Screen.Login.route) {
+                                inclusive = true
+                            }
+                            popUpTo(Screen.Splash.route) {
+                                inclusive = true
+                            }
+                        }
                     }
                 }
             }

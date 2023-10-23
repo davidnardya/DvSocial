@@ -71,10 +71,14 @@ class FeedViewModel @Inject constructor(private val userRepository: UserReposito
             ) {
                 result = true
                 userRepository.saveUserLoggedIn(true)
+                currentUser.value = user
             }
         }
         return result
     }
+
+    suspend fun getUserLoggedIn() = userRepository.getUserLoggedIn()
+
 
     fun registerUser(userName: String, password: String) {
         viewModelScope.launch {
