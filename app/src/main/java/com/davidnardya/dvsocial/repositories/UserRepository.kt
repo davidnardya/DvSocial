@@ -1,5 +1,6 @@
 package com.davidnardya.dvsocial.repositories
 
+import android.util.Log
 import com.davidnardya.dvsocial.api.UserApi
 import com.davidnardya.dvsocial.model.DvUser
 import com.davidnardya.dvsocial.model.UserPost
@@ -67,11 +68,20 @@ class UserRepository @Inject constructor(
         userPreferencesDataStore.savePreferencesDataStoreValues(PASSWORD,password)
     }
 
+    suspend fun clearDataStore() {
+        userPreferencesDataStore.removeKey(USER_NAME)
+        userPreferencesDataStore.removeKey(PASSWORD)
+        userPreferencesDataStore.clear()
+    }
+
     suspend fun getUserInfo(): DvUser {
+        val userName = userPreferencesDataStore.getPreferencesDataStoreValues(USER_NAME,"").toString()
+        val password = userPreferencesDataStore.getPreferencesDataStoreValues(PASSWORD,"").toString()
+        Log.d("123321","userName $userName password $password")
         return DvUser(
             userId = "${Random.nextInt(100000000,999999999)}",
-            userName = userPreferencesDataStore.getPreferencesDataStoreValues(USER_NAME,"").toString(),
-            password = userPreferencesDataStore.getPreferencesDataStoreValues(PASSWORD,"").toString(),
+            userName = userName,
+            password = password,
             posts = getRandomFeedUserPostList(),
             notifications = Constants.mockNotifications
         )

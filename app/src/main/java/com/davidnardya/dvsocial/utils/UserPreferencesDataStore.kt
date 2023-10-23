@@ -84,4 +84,16 @@ class UserPreferencesDataStore @Inject constructor(private val context: Context)
             }
         }
     }
+
+    suspend fun removeKey(key: String) {
+        context.dataStore.edit {
+            it.remove(stringPreferencesKey(key))
+        }
+    }
+
+    suspend fun clear() {
+        context.dataStore.edit {
+            it.clear()
+        }
+    }
 }

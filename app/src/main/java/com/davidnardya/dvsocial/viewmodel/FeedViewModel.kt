@@ -86,6 +86,7 @@ class FeedViewModel @Inject constructor(private val userRepository: UserReposito
         viewModelScope.launch {
             userRepository.saveUserInfo("", "")
             userRepository.saveUserLoggedIn(false)
+            userRepository.clearDataStore()
         }
     }
 
@@ -94,7 +95,7 @@ class FeedViewModel @Inject constructor(private val userRepository: UserReposito
             var i = true
             while (i) {
                 delay(1000L)
-                if (getFeedPostList().isNotEmpty()) {
+                if (getFeedPostList().isNotEmpty() && currentUser.value != null) {
                     i = false
                     isLoadingComplete.value = true
                 }
