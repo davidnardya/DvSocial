@@ -48,7 +48,7 @@ fun CommentScreen(feedViewModel: FeedViewModel, navHostController: NavHostContro
                 val currentPost = feedViewModel.currentPostState.value
                 val newList = currentPost.comments?.toMutableList()
                 newList?.add(
-                    UserComment(commentText.cleanSpaces(),false,0)
+                    UserComment(commentText.cleanSpaces(),false,0,currentPost.username)
                 )
                 feedViewModel.currentPostState.value = UserPost(
                     imageUrl = currentPost.imageUrl,
