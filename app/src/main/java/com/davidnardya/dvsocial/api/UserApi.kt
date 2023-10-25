@@ -1,9 +1,9 @@
 package com.davidnardya.dvsocial.api
 
-import com.davidnardya.dvsocial.model.UserImage
+import com.davidnardya.dvsocial.model.DvUser
 import retrofit2.http.GET
 
 interface UserApi {
-    @GET("breeds/image/random")
-    suspend fun getImage(): UserImage
+    @GET("user-list.json")
+    suspend fun getUserList(): List<DvUser>
 }

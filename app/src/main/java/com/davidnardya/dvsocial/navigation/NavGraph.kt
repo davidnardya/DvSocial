@@ -21,9 +21,9 @@ fun SetupNavGraph(
         navController = navHostController,
         startDestination =
         if (
-            user?.userName != null &&
-            user.userName != "" && user.password != "" &&
-            user.userName != "null" && user.password != "null"
+            user?.username != null &&
+            user.username != "" && user.password != "" &&
+            user.username != "null" && user.password != "null"
         ) {
             Screen.Splash.route
         } else {

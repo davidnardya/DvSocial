@@ -52,8 +52,8 @@ class MainActivity : ComponentActivity() {
         feedViewModel.currentUser.observe(this) {
             if (
                 it != null &&
-                it.userName.isNotEmpty() && it.password.isNotEmpty() &&
-                it.userName != "null" && it.password != "null"
+                it.username.isNotEmpty() && it.password.isNotEmpty() &&
+                it.username != "null" && it.password != "null"
             ) {
                 lifecycleScope.launch {
                     if(feedViewModel.getUserLoggedIn()) {

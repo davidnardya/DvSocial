@@ -41,8 +41,8 @@ class FeedViewModel @Inject constructor(private val userRepository: UserReposito
     fun getCurrentUser(): DvUser? {
         getCurrentUserFlow().map {
             if (
-                it.userName.isNotEmpty() && it.password.isNotEmpty() &&
-                it.userName != "null" && it.password != "null"
+                it.username.isNotEmpty() && it.password.isNotEmpty() &&
+                it.username != "null" && it.password != "null"
             ) {
                 currentUser.value = it
             }
@@ -67,8 +67,8 @@ class FeedViewModel @Inject constructor(private val userRepository: UserReposito
         viewModelScope.launch {
             val user = userRepository.getUserInfo()
             if (
-                user.userName != "" && user.password != "" &&
-                user.userName == userName && user.password == password &&
+                user.username != "" && user.password != "" &&
+                user.username == userName && user.password == password &&
                 !userRepository.getUserLoggedIn()
             ) {
                 result = true

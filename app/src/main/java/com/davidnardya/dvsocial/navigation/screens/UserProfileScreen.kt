@@ -46,9 +46,9 @@ fun UserProfileScreen(viewModel: FeedViewModel, navController: NavHostController
             ) {
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
-                        .data(posts[0].imageUrl?.image)
+                        .data(posts[0].imageUrl)
                         .build(),
-                    contentDescription = "${user.userName}Username",
+                    contentDescription = "${user.username}Username",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .size(100.dp)
@@ -56,7 +56,7 @@ fun UserProfileScreen(viewModel: FeedViewModel, navController: NavHostController
                         .border(1.dp, Color.Black, CircleShape)
                 )
                 Text(
-                    text = "Hello, ${user.userName}",
+                    text = "Hello, ${user.username}",
                     modifier = Modifier.padding(top = 6.dp)
                 )
                 PopulateFeedContent(postList = posts, navController = navController, viewModel = viewModel)

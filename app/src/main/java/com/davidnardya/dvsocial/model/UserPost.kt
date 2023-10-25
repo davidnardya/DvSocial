@@ -1,10 +1,13 @@
 package com.davidnardya.dvsocial.model
 
+import com.google.gson.annotations.SerializedName
+
 data class UserPost (
-    val userName: String? = "",
-    val imageUrl: UserImage? = null,
+    @SerializedName("image-url")
+    val imageUrl: String? = null,
     val caption: String? = "",
     val comments: List<UserComment>? = null,
+    @SerializedName("is-liked")
     override var isLiked: Boolean? = false,
     override var likes: Int? = 0,
 ) : Likeable

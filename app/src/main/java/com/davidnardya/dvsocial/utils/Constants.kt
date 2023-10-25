@@ -34,7 +34,7 @@ object Constants {
         emptyList()
     )
 
-    const val BASE_URL = "https://dog.ceo/api/"
+    const val BASE_URL = "https://dvsocial-9eff2-default-rtdb.europe-west1.firebasedatabase.app/"
     const val USER_NAME = "username"
     const val PASSWORD = "password"
     const val DID_LOG_IN = "didLogIn"

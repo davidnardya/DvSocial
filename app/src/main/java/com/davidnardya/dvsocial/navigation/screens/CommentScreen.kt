@@ -51,7 +51,6 @@ fun CommentScreen(feedViewModel: FeedViewModel, navHostController: NavHostContro
                     UserComment(commentText.cleanSpaces(),false,0)
                 )
                 feedViewModel.currentPostState.value = UserPost(
-                    userName = currentPost.userName,
                     imageUrl = currentPost.imageUrl,
                     caption = currentPost.caption,
                     comments = newList,

@@ -88,6 +88,7 @@ fun PopulateFeedContent(
     navController: NavHostController,
     viewModel: FeedViewModel
 ) {
+    val username = viewModel.currentUser.value?.username
     LazyColumn {
         itemsIndexed(postList) { index, post ->
             var likes by rememberSaveable {
@@ -105,9 +106,9 @@ fun PopulateFeedContent(
                 ) {
                     AsyncImage(
                         model = ImageRequest.Builder(LocalContext.current)
-                            .data(post.imageUrl?.image)
+                            .data(post.imageUrl)
                             .build(),
-                        contentDescription = "${post.userName}Username",
+                        contentDescription = "Username",
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .size(40.dp)
@@ -115,7 +116,7 @@ fun PopulateFeedContent(
                             .border(1.dp, Color.Black, CircleShape)
                     )
                     Text(
-                        text = post.userName ?: "",
+                        text = username ?: "",
                         style = TextStyle(
                             color = Color.Black,
                             fontWeight = FontWeight.Bold,
@@ -125,7 +126,7 @@ fun PopulateFeedContent(
                 }
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
-                        .data(post.imageUrl?.image)
+                        .data(post.imageUrl)
                         .build(),
                     contentDescription = post.caption,
                     contentScale = ContentScale.Crop,
@@ -140,7 +141,7 @@ fun PopulateFeedContent(
                                 fontWeight = FontWeight.Bold
                             )
                         ) {
-                            append(post.userName ?: "")
+                            append(username ?: "")
                         }
                         append(": ${post.caption}")
                     },
@@ -161,15 +162,15 @@ fun PopulateFeedContent(
                     ) {
                         Icon(
                             imageVector = Icons.Filled.Comment,
-                            contentDescription = "${post.userName} Comments Icon"
+                            contentDescription = "$username Comments Icon"
                         )
                     }
                     IconButton(
-                        onClick = { /*TODO*/ }
+                        onClick = { showToast("Share coming soon!") }
                     ) {
                         Icon(
                             imageVector = Icons.Filled.Share,
-                            contentDescription = "${post.userName} Share Icon"
+                            contentDescription = "$username Share Icon"
                         )
                     }
                 }
