@@ -5,7 +5,6 @@ import androidx.compose.material.icons.filled.*
 import com.davidnardya.dvsocial.model.DvUser
 import com.davidnardya.dvsocial.model.UserComment
 import com.davidnardya.dvsocial.model.UserNotification
-import com.davidnardya.dvsocial.model.UserPost
 import com.davidnardya.dvsocial.navigation.navdrawer.MenuItem
 
 
@@ -29,7 +28,6 @@ object Constants {
     )
 
     val emptyUser: DvUser = DvUser(
-        "",
         "",
         "",
         emptyList(),
@@ -83,37 +81,31 @@ object Constants {
 
     val commentsListOne = listOf(
         UserComment(
-            "1111",
             "this is a text for a short comment",
             true,
             0
         ),
         UserComment(
-            "1112",
             "this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment ",
             false,
             4
         ),
         UserComment(
-            "1113",
             "this is a text for a short comment",
             false,
             1
         ),
         UserComment(
-            "1114",
             "this is a text for a short comment",
             false,
             10
         ),
         UserComment(
-            "1115",
             "this is a text for a short comment",
             true,
             0
         ),
         UserComment(
-            "1116",
             "this is a text for a short comment",
             false,
             0
@@ -122,7 +114,6 @@ object Constants {
 
     private val commentsListTwo = listOf(
         UserComment(
-            "1111",
             "this is a text for a short comment",
             false,
             0
@@ -131,25 +122,21 @@ object Constants {
 
     private val commentsListThree = listOf(
         UserComment(
-            "1115",
             "this is a text for a short comment",
             false,
             9
         ),
         UserComment(
-            "1112",
             "this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment ",
             false,
             1
         ),
         UserComment(
-            "1113",
             "this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment ",
             true,
             5
         ),
         UserComment(
-            "1114",
             "this is a text for a short comment",
             false,
             0
@@ -162,23 +149,18 @@ object Constants {
 
     val mockNotifications = listOf(
         UserNotification(
-            "1",
             "Someone liked your post!"
         ),
         UserNotification(
-            "2",
             "Someone liked your comment!"
         ),
         UserNotification(
-            "3",
             "Someone shared your post!"
         ),
         UserNotification(
-            "4",
             "Someone liked your comment!"
         ),
         UserNotification(
-            "5",
             "Someone liked your post!"
         )
     )

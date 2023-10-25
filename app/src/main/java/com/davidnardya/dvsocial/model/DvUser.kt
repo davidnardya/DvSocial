@@ -1,7 +1,6 @@
 package com.davidnardya.dvsocial.model
 
 data class DvUser (
-    val userId: String,
     val userName: String,
     val password: String,
     val posts: List<UserPost>,

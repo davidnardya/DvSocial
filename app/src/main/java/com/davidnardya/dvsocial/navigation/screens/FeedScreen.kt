@@ -161,7 +161,7 @@ fun PopulateFeedContent(
                     ) {
                         Icon(
                             imageVector = Icons.Filled.Comment,
-                            contentDescription = "${post.id} Comments Icon"
+                            contentDescription = "${post.userName} Comments Icon"
                         )
                     }
                     IconButton(
@@ -169,7 +169,7 @@ fun PopulateFeedContent(
                     ) {
                         Icon(
                             imageVector = Icons.Filled.Share,
-                            contentDescription = "${post.id} Share Icon"
+                            contentDescription = "${post.userName} Share Icon"
                         )
                     }
                 }
@@ -204,7 +204,7 @@ fun CreateLikeButton(likeable: Likeable, likes: Int, onLikesChange: (Int) -> Uni
     ) {
         Icon(
             imageVector = if (icon) Icons.Filled.ThumbUp else Icons.Filled.ThumbUpOffAlt,
-            contentDescription = "${likeable.id} Likes Icon"
+            contentDescription = "Likes Icon"
         )
     }
 }

@@ -31,7 +31,6 @@ class UserRepository @Inject constructor(
 
         for (i in 0..3) {
             randomPostList.add(UserPost(
-                id = "${Random.nextInt(100000000,999999999)}",
                 userName = "${Constants.userNameList[Random.nextInt(0,4)]}${Random.nextInt(100,500)}",
                 imageUrl = getUserImage(),
                 caption = Constants.userImageCaptionList[Random.nextInt(0,5)],
@@ -46,7 +45,6 @@ class UserRepository @Inject constructor(
         for(i in 0..3) {
             userListToSend.add(
                 DvUser(
-                    userId = "${Random.nextInt(100000000,999999999)}",
                     userName = "${Constants.userNameList[Random.nextInt(0,4)]}${Random.nextInt(100,500)}",
                     password = "1122",
                     posts = getRandomFeedUserPostList(),
@@ -80,7 +78,6 @@ class UserRepository @Inject constructor(
         val password = userPreferencesDataStore.getPreferencesDataStoreValues(PASSWORD,"").toString()
         Log.d("123321","userName $userName password $password")
         return DvUser(
-            userId = "${Random.nextInt(100000000,999999999)}",
             userName = userName,
             password = password,
             posts = getRandomFeedUserPostList(),

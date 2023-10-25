@@ -1,6 +1,5 @@
 package com.davidnardya.dvsocial.navigation.screens
 
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -24,7 +23,6 @@ import com.davidnardya.dvsocial.model.UserComment
 import com.davidnardya.dvsocial.model.UserPost
 import com.davidnardya.dvsocial.utils.Constants.MAX_COMMENT_LENGTH
 import com.davidnardya.dvsocial.utils.cleanSpaces
-import com.davidnardya.dvsocial.utils.showToast
 import com.davidnardya.dvsocial.viewmodel.FeedViewModel
 
 @Composable
@@ -50,10 +48,9 @@ fun CommentScreen(feedViewModel: FeedViewModel, navHostController: NavHostContro
                 val currentPost = feedViewModel.currentPostState.value
                 val newList = currentPost.comments?.toMutableList()
                 newList?.add(
-                    UserComment("",commentText.cleanSpaces(),false,0)
+                    UserComment(commentText.cleanSpaces(),false,0)
                 )
                 feedViewModel.currentPostState.value = UserPost(
-                    id = currentPost.id,
                     userName = currentPost.userName,
                     imageUrl = currentPost.imageUrl,
                     caption = currentPost.caption,
