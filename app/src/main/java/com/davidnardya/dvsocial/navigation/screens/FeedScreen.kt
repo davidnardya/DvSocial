@@ -88,7 +88,6 @@ fun PopulateFeedContent(
     navController: NavHostController,
     viewModel: FeedViewModel
 ) {
-    val username = viewModel.currentUser.value?.username
     LazyColumn {
         itemsIndexed(postList) { index, post ->
             var likes by rememberSaveable {
@@ -116,7 +115,7 @@ fun PopulateFeedContent(
                             .border(1.dp, Color.Black, CircleShape)
                     )
                     Text(
-                        text = username ?: "",
+                        text = post.username ?: "",
                         style = TextStyle(
                             color = Color.Black,
                             fontWeight = FontWeight.Bold,
@@ -141,7 +140,7 @@ fun PopulateFeedContent(
                                 fontWeight = FontWeight.Bold
                             )
                         ) {
-                            append(username ?: "")
+                            append(post.username ?: "")
                         }
                         append(": ${post.caption}")
                     },
@@ -162,7 +161,7 @@ fun PopulateFeedContent(
                     ) {
                         Icon(
                             imageVector = Icons.Filled.Comment,
-                            contentDescription = "$username Comments Icon"
+                            contentDescription = "${post.username} Comments Icon"
                         )
                     }
                     IconButton(
@@ -170,7 +169,7 @@ fun PopulateFeedContent(
                     ) {
                         Icon(
                             imageVector = Icons.Filled.Share,
-                            contentDescription = "$username Share Icon"
+                            contentDescription = "${post.username} Share Icon"
                         )
                     }
                 }

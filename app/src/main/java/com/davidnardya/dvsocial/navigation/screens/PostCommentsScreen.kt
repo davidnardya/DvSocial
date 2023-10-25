@@ -40,7 +40,7 @@ fun PostCommentsScreen(viewModel: FeedViewModel, navController: NavHostControlle
                 }
                 Text(
                     modifier = Modifier.padding(6.dp),
-                    text = "username",
+                    text = comment.username ?: "TEMP Username",
                     style = TextStyle(
                         color = Color.Black,
                         fontWeight = FontWeight.Bold

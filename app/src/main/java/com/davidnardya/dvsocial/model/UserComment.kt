@@ -7,4 +7,5 @@ data class UserComment(
     @SerializedName("is-liked")
     override var isLiked: Boolean?,
     override var likes: Int?,
+    val username: String?
 ) : Likeable

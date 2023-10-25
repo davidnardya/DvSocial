@@ -31,6 +31,7 @@ class FeedViewModel @Inject constructor(private val userRepository: UserReposito
         getUsersFlow().onEach { userList ->
             userList.forEach { user ->
                 user.posts.forEach {
+                    it.username = user.username
                     postList.add(it)
                 }
             }

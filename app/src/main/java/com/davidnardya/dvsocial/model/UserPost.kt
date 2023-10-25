@@ -10,4 +10,5 @@ data class UserPost (
     @SerializedName("is-liked")
     override var isLiked: Boolean? = false,
     override var likes: Int? = 0,
+    var username: String? = ""
 ) : Likeable
