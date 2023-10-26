@@ -1,6 +1,5 @@
 package com.davidnardya.dvsocial.navigation
 
-import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -8,15 +7,16 @@ import androidx.navigation.compose.composable
 import com.davidnardya.dvsocial.model.UserPost
 import com.davidnardya.dvsocial.navigation.screens.*
 import com.davidnardya.dvsocial.viewmodel.FeedViewModel
+import com.davidnardya.dvsocial.viewmodel.LoginViewModel
 
 @Composable
 fun SetupNavGraph(
     navHostController: NavHostController,
     feedPostList: List<UserPost>,
     feedViewModel: FeedViewModel,
-    context: Context
+    loginViewModel: LoginViewModel
 ) {
-    val user = feedViewModel.getCurrentUser()
+    val user = loginViewModel.getCurrentUser()
     NavHost(
         navController = navHostController,
         startDestination =
@@ -33,17 +33,17 @@ fun SetupNavGraph(
         composable(
             route = Screen.Login.route
         ) {
-            LoginScreen(navHostController, feedViewModel)
+            LoginScreen(navHostController, loginViewModel)
         }
         composable(
             route = Screen.Registration.route
         ) {
-            RegistrationScreen(navHostController, feedViewModel)
+            RegistrationScreen(navHostController, loginViewModel)
         }
         composable(
             route = Screen.Feed.route
         ) {
-            FeedScreen(feedPostList, navHostController, feedViewModel)
+            FeedScreen(feedPostList, navHostController, feedViewModel, loginViewModel)
         }
         composable(
             route = Screen.Splash.route
@@ -58,12 +58,12 @@ fun SetupNavGraph(
         composable(
             route = Screen.UserProfile.route
         ) {
-            UserProfileScreen(feedViewModel, navHostController)
+            UserProfileScreen(feedViewModel, loginViewModel, navHostController)
         }
         composable(
             route = Screen.Notifications.route
         ) {
-            NotificationsScreen(feedViewModel, navHostController)
+            NotificationsScreen(loginViewModel, navHostController)
         }
         composable(
             route = Screen.Post.route

@@ -5,8 +5,10 @@ import com.davidnardya.dvsocial.api.UserApi
 import com.davidnardya.dvsocial.api.createRetrofitInstance
 import com.davidnardya.dvsocial.repositories.UserRepository
 import com.davidnardya.dvsocial.utils.Constants
+import com.davidnardya.dvsocial.utils.UserAuthenticator
 import com.davidnardya.dvsocial.utils.UserPreferencesDataStore
 import com.davidnardya.dvsocial.viewmodel.FeedViewModel
+import com.davidnardya.dvsocial.viewmodel.LoginViewModel
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -30,6 +32,10 @@ object AppModule {
 
     @Singleton
     @Provides
+    fun provideLoginViewModel(userRepository: UserRepository) = LoginViewModel(userRepository)
+
+    @Singleton
+    @Provides
     fun provideUserService(): UserApi = createRetrofitInstance(Constants.BASE_URL)
 
     @Singleton
@@ -38,4 +44,10 @@ object AppModule {
         userApi: UserApi,
         userPreferencesDataStore: UserPreferencesDataStore
     ) = UserRepository(userApi, userPreferencesDataStore)
+
+    @Singleton
+    @Provides
+    fun provideUserAuthenticator(
+        userRepository: UserRepository
+    ) = UserAuthenticator(userRepository)
 }

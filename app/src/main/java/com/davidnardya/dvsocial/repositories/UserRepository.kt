@@ -11,19 +11,22 @@ import com.davidnardya.dvsocial.utils.UserPreferencesDataStore
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import javax.inject.Inject
 
 class UserRepository @Inject constructor(
     private val userApi: UserApi,
     private val userPreferencesDataStore: UserPreferencesDataStore
     ) {
-    private val userList = MutableStateFlow(mutableListOf<DvUser>())
-    private val currentUser = MutableStateFlow(Constants.emptyUser)
-
     private suspend fun getUserList() = userApi.getUserList()
 
+    private val userList = MutableStateFlow(mutableListOf<DvUser>())
     fun getUserListFlow(): MutableStateFlow<MutableList<DvUser>> = userList
-    fun getCurrentUserFlow(): Flow<DvUser> = currentUser
+
+    private val currentUserFlow = MutableStateFlow(Constants.emptyUser)
+    fun getCurrentUserFlow(): Flow<DvUser> = currentUserFlow
 
 //    private suspend fun getRandomFeedUserPostList() : List<UserPost> {
 //        val randomPostList = mutableListOf<UserPost>()
@@ -59,12 +62,25 @@ class UserRepository @Inject constructor(
 
     suspend fun subscribeToCurrentUserFlow() {
         delay(1000)
-        currentUser.tryEmit(getUserInfo())
+        currentUserFlow.tryEmit(getUserInfo())
     }
 
     suspend fun saveUserInfo(username: String, password: String) {
-        userPreferencesDataStore.savePreferencesDataStoreValues(USER_NAME,username)
-        userPreferencesDataStore.savePreferencesDataStoreValues(PASSWORD,password)
+
+        if(username != "" && password != "") {
+            val response: Response<DvUser> = userApi.registerUser(DvUser(username, password, emptyList(), emptyList()))
+            if (response.isSuccessful) {
+                Log.d("123321","username ${response.body()?.username} response ${response.message()}")
+                userPreferencesDataStore.savePreferencesDataStoreValues(USER_NAME,username)
+                userPreferencesDataStore.savePreferencesDataStoreValues(PASSWORD,password)
+
+            }
+        } else {
+            userPreferencesDataStore.savePreferencesDataStoreValues(USER_NAME,username)
+            userPreferencesDataStore.savePreferencesDataStoreValues(PASSWORD,password)
+        }
+
+
     }
 
     suspend fun clearDataStore() {

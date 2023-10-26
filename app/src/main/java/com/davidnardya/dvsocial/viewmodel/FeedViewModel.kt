@@ -17,14 +17,14 @@ import javax.inject.Inject
 @HiltViewModel
 class FeedViewModel @Inject constructor(private val userRepository: UserRepository) : ViewModel() {
 
-    val currentUser: MutableLiveData<DvUser> = MutableLiveData()
+
     val isLoadingComplete: MutableLiveData<Boolean> = MutableLiveData(false)
     val currentPostState = mutableStateOf(UserPost(comments = Constants.commentsListOne))
 
     private fun getUsersFlow(): MutableStateFlow<MutableList<DvUser>> =
         userRepository.getUserListFlow()
 
-    private fun getCurrentUserFlow(): Flow<DvUser> = userRepository.getCurrentUserFlow()
+
 
     fun getFeedPostList(): MutableList<UserPost> {
         val postList = mutableListOf<UserPost>()
@@ -39,61 +39,11 @@ class FeedViewModel @Inject constructor(private val userRepository: UserReposito
         return postList
     }
 
-    fun getCurrentUser(): DvUser? {
-        getCurrentUserFlow().map {
-            if (
-                it.username.isNotEmpty() && it.password.isNotEmpty() &&
-                it.username != "null" && it.password != "null"
-            ) {
-                currentUser.value = it
-            }
-        }.launchIn(viewModelScope)
-        return currentUser.value
-    }
+
 
     fun subscribeToUserListFlow() {
         viewModelScope.launch {
             userRepository.subscribeToUserListFlow()
-        }
-    }
-
-    fun subscribeToCurrentUserFlow() {
-        viewModelScope.launch {
-            userRepository.subscribeToCurrentUserFlow()
-        }
-    }
-
-    fun userAttemptLogin(userName: String, password: String): Boolean {
-        var result = false
-        viewModelScope.launch {
-            val user = userRepository.getUserInfo()
-            if (
-                user.username != "" && user.password != "" &&
-                user.username == userName && user.password == password &&
-                !userRepository.getUserLoggedIn()
-            ) {
-                result = true
-                userRepository.saveUserLoggedIn(true)
-                currentUser.value = user
-            }
-        }
-        return result
-    }
-
-    suspend fun getUserLoggedIn() = userRepository.getUserLoggedIn()
-
-
-    fun registerUser(userName: String, password: String) {
-        viewModelScope.launch {
-            userRepository.saveUserInfo(userName, password)
-        }
-    }
-
-    fun userLogOut() {
-        viewModelScope.launch {
-            userRepository.saveUserInfo("", "")
-            userRepository.saveUserLoggedIn(false)
-            userRepository.clearDataStore()
         }
     }
 
@@ -102,7 +52,7 @@ class FeedViewModel @Inject constructor(private val userRepository: UserReposito
             var i = true
             while (i) {
                 delay(1000L)
-                if (getFeedPostList().isNotEmpty() && currentUser.value != null) {
+                if (getFeedPostList().isNotEmpty() && userRepository.getUserLoggedIn()) {
                     i = false
                     isLoadingComplete.value = true
                 }

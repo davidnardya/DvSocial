@@ -21,10 +21,11 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.davidnardya.dvsocial.viewmodel.FeedViewModel
+import com.davidnardya.dvsocial.viewmodel.LoginViewModel
 
 @Composable
-fun UserProfileScreen(viewModel: FeedViewModel, navController: NavHostController) {
-    val user = viewModel.currentUser.value
+fun UserProfileScreen(feedViewModel: FeedViewModel, loginViewModel: LoginViewModel, navController: NavHostController) {
+    val user = loginViewModel.currentUser.value
 
     user?.posts?.let { posts ->
         if (posts.isEmpty()) {
@@ -59,7 +60,7 @@ fun UserProfileScreen(viewModel: FeedViewModel, navController: NavHostController
                     text = "Hello, ${user.username}",
                     modifier = Modifier.padding(top = 6.dp)
                 )
-                PopulateFeedContent(postList = posts, navController = navController, viewModel = viewModel)
+                PopulateFeedContent(postList = posts, navController = navController, viewModel = feedViewModel)
             }
         }
     }

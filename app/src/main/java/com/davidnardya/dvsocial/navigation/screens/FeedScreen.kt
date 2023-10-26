@@ -47,6 +47,7 @@ import com.davidnardya.dvsocial.utils.Constants
 import com.davidnardya.dvsocial.utils.showLikesText
 import com.davidnardya.dvsocial.utils.showToast
 import com.davidnardya.dvsocial.viewmodel.FeedViewModel
+import com.davidnardya.dvsocial.viewmodel.LoginViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -54,7 +55,8 @@ import kotlinx.coroutines.launch
 fun FeedScreen(
     postList: List<UserPost>,
     navController: NavHostController,
-    viewModel: FeedViewModel
+    feedViewModel: FeedViewModel,
+    loginViewModel: LoginViewModel
 ) {
 
     val scaffoldState = rememberScaffoldState()
@@ -73,11 +75,11 @@ fun FeedScreen(
         drawerGesturesEnabled = scaffoldState.drawerState.isOpen,
         drawerContent = {
             DrawerHeader()
-            SetDrawerBody(navController, scope, scaffoldState, viewModel)
+            SetDrawerBody(navController, scope, scaffoldState, loginViewModel)
         },
         content = { paddingValues ->
             Modifier.padding(paddingValues)
-            PopulateFeedContent(postList, navController, viewModel)
+            PopulateFeedContent(postList, navController, feedViewModel)
         }
     )
 }
@@ -86,7 +88,7 @@ fun FeedScreen(
 fun PopulateFeedContent(
     postList: List<UserPost>,
     navController: NavHostController,
-    viewModel: FeedViewModel
+    viewModel: FeedViewModel,
 ) {
     LazyColumn {
         itemsIndexed(postList) { index, post ->
@@ -246,7 +248,7 @@ private fun SetDrawerBody(
     navController: NavHostController,
     scope: CoroutineScope,
     scaffoldState: ScaffoldState,
-    viewModel: FeedViewModel
+    viewModel: LoginViewModel
 ) {
     DrawerBody(
         items = Constants.menuList,

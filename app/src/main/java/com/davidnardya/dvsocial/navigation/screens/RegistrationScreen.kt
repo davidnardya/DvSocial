@@ -14,11 +14,12 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import com.davidnardya.dvsocial.utils.showToast
 import com.davidnardya.dvsocial.viewmodel.FeedViewModel
+import com.davidnardya.dvsocial.viewmodel.LoginViewModel
 
 @Composable
 fun RegistrationScreen(
     navHostController: NavHostController,
-    viewModel: FeedViewModel
+    viewModel: LoginViewModel
 ) {
     var userName by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }

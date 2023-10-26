@@ -1,6 +1,7 @@
 package com.davidnardya.dvsocial
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.CompositionLocalProvider
@@ -14,8 +15,13 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.davidnardya.dvsocial.events.UserEvents
+import com.davidnardya.dvsocial.model.DvUser
 import com.davidnardya.dvsocial.navigation.SetupNavGraph
 import com.davidnardya.dvsocial.navigation.screens.Screen
+import com.davidnardya.dvsocial.utils.UserAuthenticator
+import com.davidnardya.dvsocial.viewmodel.LoginViewModel
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -24,12 +30,24 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var feedViewModel: FeedViewModel
 
+    @Inject
+    lateinit var loginViewModel: LoginViewModel
+
+    @Inject
+    lateinit var userAuthenticator: UserAuthenticator
+
     private lateinit var navController: NavHostController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initActivity()
         initObservers()
+
+        lifecycleScope.launch {
+            loginViewModel.getEventsFlow().collect {
+                userAuthenticator.handleUserEvent(it)
+            }
+        }
 
         setContent {
             navController = rememberNavController()
@@ -42,21 +60,21 @@ class MainActivity : ComponentActivity() {
                     navHostController = navController,
                     feedPostList = posts,
                     feedViewModel = feedViewModel,
-                    context = this
+                    loginViewModel = loginViewModel
                 )
             }
         }
     }
 
     private fun initObservers() {
-        feedViewModel.currentUser.observe(this) {
+        loginViewModel.currentUser.observe(this) {
             if (
                 it != null &&
                 it.username.isNotEmpty() && it.password.isNotEmpty() &&
                 it.username != "null" && it.password != "null"
             ) {
                 lifecycleScope.launch {
-                    if(feedViewModel.getUserLoggedIn()) {
+                    if(loginViewModel.getUserLoggedIn()) {
                         navController.navigate(route = Screen.Splash.route) {
                             popUpTo(Screen.Login.route) {
                                 inclusive = true
@@ -86,6 +104,6 @@ class MainActivity : ComponentActivity() {
 
     private fun initActivity() {
         feedViewModel.subscribeToUserListFlow()
-        feedViewModel.subscribeToCurrentUserFlow()
+        loginViewModel.subscribeToCurrentUserFlow()
     }
 }
