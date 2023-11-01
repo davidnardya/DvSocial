@@ -31,7 +31,7 @@ class LoginViewModel @Inject constructor(private val userRepository: UserReposit
     fun getCurrentUser(): DvUser? {
         getCurrentUserFlow().map {
             if (
-                it.username.isNotEmpty() && it.password.isNotEmpty() &&
+                it.username?.isNotEmpty() == true && it.password?.isNotEmpty() == true &&
                 it.username != "null" && it.password != "null"
             ) {
                 currentUser.value = it

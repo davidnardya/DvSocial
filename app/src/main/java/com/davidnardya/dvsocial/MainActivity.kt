@@ -70,7 +70,7 @@ class MainActivity : ComponentActivity() {
         loginViewModel.currentUser.observe(this) {
             if (
                 it != null &&
-                it.username.isNotEmpty() && it.password.isNotEmpty() &&
+                it.username?.isNotEmpty() == true && it.password?.isNotEmpty() == true &&
                 it.username != "null" && it.password != "null"
             ) {
                 lifecycleScope.launch {

@@ -3,6 +3,7 @@ package com.davidnardya.dvsocial.repositories
 import android.util.Log
 import com.davidnardya.dvsocial.api.UserApi
 import com.davidnardya.dvsocial.model.DvUser
+import com.davidnardya.dvsocial.model.UserPost
 import com.davidnardya.dvsocial.utils.Constants
 import com.davidnardya.dvsocial.utils.Constants.DID_LOG_IN
 import com.davidnardya.dvsocial.utils.Constants.PASSWORD
@@ -57,7 +58,7 @@ class UserRepository @Inject constructor(
 //        }
 //        val oldList = userList.value.toMutableList()
 //        oldList.addAll(userListToSend)
-        userList.tryEmit(getUserList().toMutableList())
+        userList.tryEmit(getUserList().userList.toMutableList())
     }
 
     suspend fun subscribeToCurrentUserFlow() {
@@ -97,7 +98,16 @@ class UserRepository @Inject constructor(
         return DvUser(
             username = userName,
             password = password,
-            posts = userList.value[0].posts,
+            posts = userList.value[0].posts ?: listOf(
+                UserPost(
+                    "",
+                    "KKK",
+                    Constants.commentsListOne,
+                    false,
+                    0,
+                    ""
+                )
+            ),
             notifications = Constants.mockNotifications
         )
     }
