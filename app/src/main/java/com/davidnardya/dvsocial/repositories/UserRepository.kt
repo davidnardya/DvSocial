@@ -2,7 +2,6 @@ package com.davidnardya.dvsocial.repositories
 
 import android.util.Log
 import com.davidnardya.dvsocial.api.UserApi
-import com.davidnardya.dvsocial.model.DvObject
 import com.davidnardya.dvsocial.model.DvUser
 import com.davidnardya.dvsocial.utils.Constants
 import com.davidnardya.dvsocial.utils.Constants.DID_LOG_IN
@@ -20,48 +19,13 @@ import com.google.firebase.database.getValue
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import retrofit2.Response
 import javax.inject.Inject
 
 class UserRepository @Inject constructor(
     private val userApi: UserApi,
     private val userPreferencesDataStore: UserPreferencesDataStore
-    ) {
+) {
     private var dBRef: DatabaseReference = FirebaseDatabase.getInstance().reference
-
-    private suspend fun getUserList(): List<DvUser>? {
-//        return userApi.getUserList()?.userList
-//        var userList: MutableList<DvUser> = mutableListOf()
-        var userList: MutableList<DvUser> = mutableListOf()
-        dBRef.addValueEventListener(object : ValueEventListener{
-            override fun onDataChange(snapshot: DataSnapshot) {
-                Log.d("123321","onDataChange")
-
-//                snapshot.getValue<List<DvUser>>()?.let {
-//                    userList = it
-//                }
-
-                snapshot.children.forEach {
-                    it.children.forEach { user ->
-                        val i = user.getValue<DvUser>()
-                        Log.d("123321","it.value ${user.value}")
-                        Log.d("123321","i username ${i?.username}")
-                        user.getValue<DvUser>()?.let { it1 -> userList.add(it1) }
-                    }
-
-                }
-                Log.d("123321","userList $userList")
-
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                Log.e("UserRepository ValueEventListener", error.message)
-            }
-
-        })
-        return userList
-    }
-
 
     private val userList = MutableStateFlow(mutableListOf<DvUser>())
     fun getUserListFlow(): MutableStateFlow<MutableList<DvUser>> = userList
@@ -69,38 +33,25 @@ class UserRepository @Inject constructor(
     private val currentUserFlow = MutableStateFlow(Constants.emptyUser)
     fun getCurrentUserFlow(): Flow<DvUser> = currentUserFlow
 
-//    private suspend fun getRandomFeedUserPostList() : List<UserPost> {
-//        val randomPostList = mutableListOf<UserPost>()
-//
-//        for (i in 0..3) {
-//            randomPostList.add(UserPost(
-//                imageUrl = getUserList(),
-//                caption = Constants.userImageCaptionList[Random.nextInt(0,5)],
-//                comments = Constants.mockComments[Random.nextInt(0,3)]
-//            ))
-//        }
-//        return randomPostList
-//    }
 
+    fun subscribeToUserListFlow() {
+        dBRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val list = mutableListOf<DvUser>()
+                snapshot.children.forEach { users ->
+                    users.children.forEach { user ->
+                        user.getValue<DvUser>()?.let {
+                            list.add(it)
+                        }
+                    }
+                }
+                userList.tryEmit(list)
+            }
 
-
-    suspend fun subscribeToUserListFlow() {
-//        val userListToSend = mutableListOf<DvUser>()
-//        for(i in 0..3) {
-//            userListToSend.add(
-//                DvUser(
-//                    username = "${Constants.userNameList[Random.nextInt(0,4)]}${Random.nextInt(100,500)}",
-//                    password = "1122",
-//                    posts = getRandomFeedUserPostList(),
-//                    notifications = Constants.mockNotifications
-//                )
-//            )
-//        }
-//        val oldList = userList.value.toMutableList()
-//        oldList.addAll(userListToSend)
-//        getUserList()?.userList?.toMutableList()?.let { userList.tryEmit(it) }
-
-        getUserList()?.toMutableList()?.let { userList.tryEmit(it) }
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("UserRepository ValueEventListener", error.message)
+            }
+        })
 
     }
 
@@ -109,38 +60,28 @@ class UserRepository @Inject constructor(
         currentUserFlow.tryEmit(getUserInfo())
     }
 
-    suspend fun saveUserInfo(username: String, password: String) {
+    suspend fun saveUserInfo(username: String, password: String, isNewUSer: Boolean = false) {
 
-        if(username != "" && password != "") {
+        if (username != "" && password != "") {
 
-            val database = Firebase.database
-            val myRef = database.getReference("userList")
+            if(isNewUSer) {
+                val database = Firebase.database
+                val myRef = database.getReference("userList")
 
-            myRef.push().setValue(
-                DvUser(
-                    username,
-                    password,
-                    Constants.mockPosts,
-                    Constants.mockNotifications
+                myRef.push().setValue(
+                    DvUser(
+                        username,
+                        password,
+                        Constants.mockPosts,
+                        Constants.mockNotifications
+                    )
                 )
-            )
-//            val response: Response<DvUser> = userApi.registerUser(
-//                DvUser(
-//                    username,
-//                    password,
-//                    Constants.mockPosts,
-//                    Constants.mockNotifications
-//                )
-//            )
-//            if (response.isSuccessful) {
-//                Log.d("123321","username ${response.body()?.username} response ${response.message()}")
-                userPreferencesDataStore.savePreferencesDataStoreValues(USER_NAME,username)
-                userPreferencesDataStore.savePreferencesDataStoreValues(PASSWORD,password)
-
-//            }
+            }
+            userPreferencesDataStore.savePreferencesDataStoreValues(USER_NAME, username)
+            userPreferencesDataStore.savePreferencesDataStoreValues(PASSWORD, password)
         } else {
-            userPreferencesDataStore.savePreferencesDataStoreValues(USER_NAME,username)
-            userPreferencesDataStore.savePreferencesDataStoreValues(PASSWORD,password)
+            userPreferencesDataStore.savePreferencesDataStoreValues(USER_NAME, username)
+            userPreferencesDataStore.savePreferencesDataStoreValues(PASSWORD, password)
         }
 
 
@@ -154,9 +95,11 @@ class UserRepository @Inject constructor(
     }
 
     suspend fun getUserInfo(): DvUser {
-        val userName = userPreferencesDataStore.getPreferencesDataStoreValues(USER_NAME,"").toString()
-        val password = userPreferencesDataStore.getPreferencesDataStoreValues(PASSWORD,"").toString()
-        Log.d("123321","userName $userName password $password")
+        val userName =
+            userPreferencesDataStore.getPreferencesDataStoreValues(USER_NAME, "").toString()
+        val password =
+            userPreferencesDataStore.getPreferencesDataStoreValues(PASSWORD, "").toString()
+        Log.d("123321", "userName $userName password $password")
         return DvUser(
             username = userName,
             password = password,
@@ -166,10 +109,10 @@ class UserRepository @Inject constructor(
     }
 
     suspend fun saveUserLoggedIn(didLogIn: Boolean) {
-        userPreferencesDataStore.savePreferencesDataStoreValues(DID_LOG_IN,didLogIn)
+        userPreferencesDataStore.savePreferencesDataStoreValues(DID_LOG_IN, didLogIn)
     }
 
     suspend fun getUserLoggedIn(): Boolean {
-        return userPreferencesDataStore.getPreferencesDataStoreValues(DID_LOG_IN,false) == true
+        return userPreferencesDataStore.getPreferencesDataStoreValues(DID_LOG_IN, false) == true
     }
 }
