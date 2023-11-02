@@ -31,15 +31,22 @@ class UserRepository @Inject constructor(
 
     private suspend fun getUserList(): List<DvUser>? {
 //        return userApi.getUserList()?.userList
+//        var userList: MutableList<DvUser> = mutableListOf()
         var userList: MutableList<DvUser> = mutableListOf()
         dBRef.addValueEventListener(object : ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
                 Log.d("123321","onDataChange")
 
-                for (userSnapShot in snapshot.children) {
-                    val users = userSnapShot.getValue<DvObject>()
-                    users?.userList?.toMutableList()?.let {
-                        userList = it
+//                snapshot.getValue<List<DvUser>>()?.let {
+//                    userList = it
+//                }
+
+                snapshot.children.forEach {
+                    it.children.forEach { user ->
+                        val i = user.getValue<DvUser>()
+                        Log.d("123321","it.value ${user.value}")
+                        Log.d("123321","i username ${i?.username}")
+                        user.getValue<DvUser>()?.let { it1 -> userList.add(it1) }
                     }
 
                 }
