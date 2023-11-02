@@ -58,7 +58,7 @@ class UserRepository @Inject constructor(
 //        }
 //        val oldList = userList.value.toMutableList()
 //        oldList.addAll(userListToSend)
-        userList.tryEmit(getUserList().userList.toMutableList())
+        getUserList().userList?.toMutableList()?.let { userList.tryEmit(it) }
     }
 
     suspend fun subscribeToCurrentUserFlow() {
@@ -98,7 +98,7 @@ class UserRepository @Inject constructor(
         return DvUser(
             username = userName,
             password = password,
-            posts = userList.value[0].posts ?: listOf(
+            posts = /*userList.value[0].posts ?:*/ listOf(
                 UserPost(
                     "",
                     "KKK",
