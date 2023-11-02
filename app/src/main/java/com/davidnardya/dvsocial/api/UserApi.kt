@@ -8,8 +8,8 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 
 interface UserApi {
-    @GET("userList.json")
-    suspend fun getUserList(): DvObject
+    @GET("data.json")
+    suspend fun getUserList(): DvObject?
 
     @POST("userList.json")
     suspend fun registerUser(@Body newUser: DvUser): Response<DvUser>

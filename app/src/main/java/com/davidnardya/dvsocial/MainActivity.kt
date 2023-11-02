@@ -21,6 +21,8 @@ import com.davidnardya.dvsocial.navigation.SetupNavGraph
 import com.davidnardya.dvsocial.navigation.screens.Screen
 import com.davidnardya.dvsocial.utils.UserAuthenticator
 import com.davidnardya.dvsocial.viewmodel.LoginViewModel
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
