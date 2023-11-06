@@ -68,12 +68,17 @@ fun SetupNavGraph(
         composable(
             route = Screen.Post.route
         ) {
-            PostScreen()
+            PostScreen(navHostController, feedViewModel, loginViewModel)
         }
         composable(
             route = Screen.Comment.route
         ) {
             CommentScreen(feedViewModel, navHostController)
+        }
+        composable(
+            route = Screen.Camera.route
+        ) {
+            CameraScreen()
         }
     }
 }

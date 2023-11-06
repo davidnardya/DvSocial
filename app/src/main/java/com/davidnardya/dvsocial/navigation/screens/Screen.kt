@@ -10,4 +10,5 @@ sealed class Screen(val route: String) {
     object Notifications: Screen("NotificationsScreen")
     object Post: Screen("PostScreen")
     object Comment: Screen("CommentScreen")
+    object Camera: Screen("CameraScreen")
 }
