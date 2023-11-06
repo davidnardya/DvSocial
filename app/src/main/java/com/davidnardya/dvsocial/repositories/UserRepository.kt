@@ -60,22 +60,25 @@ class UserRepository @Inject constructor(
         currentUserFlow.tryEmit(getUserInfo())
     }
 
-    suspend fun saveUserInfo(username: String, password: String, isNewUSer: Boolean = false) {
+    suspend fun saveUserInfo(username: String, password: String, isNewUser: Boolean = false) {
 
         if (username != "" && password != "") {
 
-            if(isNewUSer) {
+            if(isNewUser) {
                 val database = Firebase.database
                 val myRef = database.getReference("userList")
 
-                myRef.push().setValue(
-                    DvUser(
-                        username,
-                        password,
-                        Constants.mockPosts,
-                        Constants.mockNotifications
+                myRef.push().let {
+                    it.setValue(
+                        DvUser(
+                            it.key,
+                            username,
+                            password,
+                            Constants.mockPosts,
+                            Constants.mockNotifications
+                        )
                     )
-                )
+                }
             }
             userPreferencesDataStore.savePreferencesDataStoreValues(USER_NAME, username)
             userPreferencesDataStore.savePreferencesDataStoreValues(PASSWORD, password)

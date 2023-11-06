@@ -31,6 +31,7 @@ object Constants {
     val emptyUser: DvUser = DvUser(
         "",
         "",
+        "",
         emptyList(),
         emptyList()
     )

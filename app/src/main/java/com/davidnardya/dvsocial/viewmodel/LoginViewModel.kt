@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.davidnardya.dvsocial.events.UserEvents
 import com.davidnardya.dvsocial.model.DvUser
 import com.davidnardya.dvsocial.repositories.UserRepository
-import com.davidnardya.dvsocial.utils.produceResult
+import com.davidnardya.dvsocial.utils.userLoginAuthProduceResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
@@ -61,7 +61,7 @@ class LoginViewModel @Inject constructor(private val userRepository: UserReposit
         eventsFlow.tryEmit(UserEvents.OnLogIn(username, password))
         viewModelScope.launch {
             val user = userRepository.getUserInfo()
-            if (produceResult.receive()) {
+            if (userLoginAuthProduceResult.receive()) {
                 result = true
                 userRepository.saveUserLoggedIn(true)
                 currentUser.value = user
