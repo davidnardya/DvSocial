@@ -7,6 +7,7 @@ import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -16,12 +17,14 @@ import androidx.compose.ui.text.TextStyle
 import androidx.navigation.NavHostController
 import com.davidnardya.dvsocial.utils.showToast
 import com.davidnardya.dvsocial.viewmodel.LoginViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(navHostController: NavHostController, viewModel: LoginViewModel) {
     var userName by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
     val loginFailures = rememberSaveable { mutableStateOf(0) }
+    val scope = rememberCoroutineScope()
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -58,14 +61,16 @@ fun LoginScreen(navHostController: NavHostController, viewModel: LoginViewModel)
         ) {
             Button(
                 onClick = {
-                    if (viewModel.userAttemptLogin(userName, password)) {
-                        navHostController.navigate(route = Screen.Splash.route) {
-                            popUpTo(Screen.Login.route) {
-                                inclusive = true
+                    scope.launch {
+                        if (viewModel.userAttemptLogin(userName, password)) {
+                            navHostController.navigate(route = Screen.Splash.route) {
+                                popUpTo(Screen.Login.route) {
+                                    inclusive = true
+                                }
                             }
+                        } else {
+                            loginFailures.value = loginFailures.value.plus(1)
                         }
-                    } else {
-                        loginFailures.value = loginFailures.value.plus(1)
                     }
                 }
             ) {

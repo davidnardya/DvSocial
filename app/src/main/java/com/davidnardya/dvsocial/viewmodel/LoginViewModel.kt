@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.davidnardya.dvsocial.events.UserEvents
 import com.davidnardya.dvsocial.model.DvUser
 import com.davidnardya.dvsocial.repositories.UserRepository
+import com.davidnardya.dvsocial.utils.produceResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
@@ -44,7 +45,7 @@ class LoginViewModel @Inject constructor(private val userRepository: UserReposit
 //        viewModelScope.launch {
 //            userRepository.saveUserInfo(userName, password)
 //        }
-        eventsFlow.tryEmit(UserEvents.OnNewUserCreated(userName,password))
+        eventsFlow.tryEmit(UserEvents.OnNewUserCreated(userName, password))
     }
 
     fun userLogOut() {
@@ -55,19 +56,25 @@ class LoginViewModel @Inject constructor(private val userRepository: UserReposit
         }
     }
 
-    fun userAttemptLogin(username: String, password: String): Boolean {
+    suspend fun userAttemptLogin(username: String, password: String): Boolean {
         var result = false
-        eventsFlow.tryEmit(UserEvents.OnLogIn(username,password))
+        eventsFlow.tryEmit(UserEvents.OnLogIn(username, password))
         viewModelScope.launch {
             val user = userRepository.getUserInfo()
-            if (
-                user.username != "" && user.password != "" &&
-                user.username == username && user.password == password &&
-                !userRepository.getUserLoggedIn()
-            ) {
+            if (produceResult.receive()) {
                 result = true
                 userRepository.saveUserLoggedIn(true)
                 currentUser.value = user
+            } else {
+                if (
+                    user.username != "" && user.password != "" &&
+                    user.username == username && user.password == password &&
+                    !userRepository.getUserLoggedIn()
+                ) {
+                    result = true
+                    userRepository.saveUserLoggedIn(true)
+                    currentUser.value = user
+                }
             }
         }
         return result

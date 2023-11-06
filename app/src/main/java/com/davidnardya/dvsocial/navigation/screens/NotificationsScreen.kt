@@ -29,7 +29,7 @@ fun NotificationsScreen(loginViewModel: LoginViewModel, navHostController: NavHo
                 modifier = Modifier.fillMaxSize(),
             ){
                 ClickableText(
-                    text = AnnotatedString(notification.text),
+                    text = AnnotatedString(notification.text ?: "NoText"),
                     modifier = Modifier.padding(6.dp),
                     onClick = {
                         showToast("Coming soon!")
