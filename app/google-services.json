@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "319259377094",
+    "firebase_url": "https://dvsocial-9eff2-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "dvsocial-9eff2",
+    "storage_bucket": "dvsocial-9eff2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:319259377094:android:6b948d1a2a40f6e311c6c7",
+        "android_client_info": {
+          "package_name": "com.davidnardya.dvsocial"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCVc3lcpXbp1TEpqa7FqFpQNh1aWl9PhN4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
