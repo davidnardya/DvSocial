@@ -8,7 +8,6 @@ import javax.inject.Inject
 class UserAuthenticator @Inject constructor(private val userRepository: UserRepository) {
 
     suspend fun handleUserEvent(event: UserEvents) {
-
         when (event) {
             is UserEvents.OnLogIn -> authLogin(event.username, event.password)
             is UserEvents.OnNewUserCreated -> authRegistration(event.username, event.password)
