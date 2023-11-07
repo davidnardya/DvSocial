@@ -1,5 +1,6 @@
 package com.davidnardya.dvsocial.repositories
 
+import android.net.Uri
 import android.util.Log
 import com.davidnardya.dvsocial.api.UserApi
 import com.davidnardya.dvsocial.model.DvUser
@@ -16,16 +17,22 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.database
 import com.google.firebase.database.getValue
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 class UserRepository @Inject constructor(
     private val userApi: UserApi,
     private val userPreferencesDataStore: UserPreferencesDataStore
 ) {
-    private var dBRef: DatabaseReference = FirebaseDatabase.getInstance().reference
+    private val dBRef: DatabaseReference = FirebaseDatabase.getInstance().reference
+    private val imageDBRef = FirebaseStorage.getInstance().reference
+
 
     private val userList = MutableStateFlow(mutableListOf<DvUser>())
     fun getUserListFlow(): MutableStateFlow<MutableList<DvUser>> = userList
@@ -117,5 +124,18 @@ class UserRepository @Inject constructor(
 
     suspend fun getUserLoggedIn(): Boolean {
         return userPreferencesDataStore.getPreferencesDataStoreValues(DID_LOG_IN, false) == true
+    }
+
+    fun uploadImage(uri: Uri): String {
+        val timeStamp = SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(Date())
+        val storageReference = imageDBRef.child("images/${timeStamp}${System.currentTimeMillis()}.jpg")
+        storageReference.putFile(uri)
+        return storageReference.path
+    }
+
+    suspend fun getImageDownloadUrl(path: String): String {
+        var result = ""
+
+        return result
     }
 }

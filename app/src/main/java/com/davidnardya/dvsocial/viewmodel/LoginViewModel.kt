@@ -1,5 +1,6 @@
 package com.davidnardya.dvsocial.viewmodel
 
+import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -93,4 +94,7 @@ class LoginViewModel @Inject constructor(private val userRepository: UserReposit
 
         }
     }
+
+    fun uploadImage(uri: Uri): String = userRepository.uploadImage(uri)
+    suspend fun getImageDownloadUrl(path: String): String = userRepository.getImageDownloadUrl(path)
 }

@@ -1,6 +1,7 @@
 package com.davidnardya.dvsocial.navigation.screens
 
 import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -26,6 +28,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.davidnardya.dvsocial.utils.Constants
 import com.davidnardya.dvsocial.viewmodel.FeedViewModel
 import com.davidnardya.dvsocial.viewmodel.LoginViewModel
+import kotlinx.coroutines.launch
 import java.io.File
 
 @Composable
@@ -35,6 +38,7 @@ fun PostScreen(
     loginViewModel: LoginViewModel,
     uri: Uri?
 ) {
+    val scope = rememberCoroutineScope()
     var postText by rememberSaveable { mutableStateOf("") }
     var buttonHeight by rememberSaveable { mutableStateOf(0) }
     var selectedImageUri by remember {
@@ -45,12 +49,23 @@ fun PostScreen(
         modifier = Modifier.padding(6.dp)
     ) {
         Button(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .onGloballyPositioned {
+                    buttonHeight = it.size.height
+                },
             onClick = {
-                navController.navigate(Screen.PhotoPick.route)
+                //Add new post to user's post list
+                if (uri != null) {
+                    val path = loginViewModel.uploadImage(uri)
+                    scope.launch {
+                        val url = loginViewModel.getImageDownloadUrl(path)
+                        Log.d("123321","url: $url")
+                    }
+                }
             }
         ) {
-            Text(text = "Add a new picture")
+            Text(text = "POST")
         }
         TextField(
             modifier = Modifier
@@ -65,16 +80,12 @@ fun PostScreen(
             }
         )
         Button(
-            modifier = Modifier
-                .fillMaxWidth()
-                .onGloballyPositioned {
-                    buttonHeight = it.size.height
-                },
+            modifier = Modifier.fillMaxWidth(),
             onClick = {
-                //Add new post to user's post list
+                navController.navigate(Screen.PhotoPick.route)
             }
         ) {
-            Text(text = "POST")
+            Text(text = "Add a new picture")
         }
         if(selectedImageUri?.path != null && selectedImageUri?.path != "") {
             Image(
