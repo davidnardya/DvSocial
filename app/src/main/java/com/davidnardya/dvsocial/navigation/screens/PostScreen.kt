@@ -1,12 +1,10 @@
 package com.davidnardya.dvsocial.navigation.screens
 
 import android.net.Uri
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
@@ -25,11 +23,13 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
+import com.davidnardya.dvsocial.model.UserPost
+import com.davidnardya.dvsocial.repositories.imageDownloadUrlProduceResult
 import com.davidnardya.dvsocial.utils.Constants
 import com.davidnardya.dvsocial.viewmodel.FeedViewModel
 import com.davidnardya.dvsocial.viewmodel.LoginViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.io.File
 
 @Composable
 fun PostScreen(
@@ -38,6 +38,9 @@ fun PostScreen(
     loginViewModel: LoginViewModel,
     uri: Uri?
 ) {
+    val currentUser by remember {
+        mutableStateOf(loginViewModel.currentUser.value)
+    }
     val scope = rememberCoroutineScope()
     var postText by rememberSaveable { mutableStateOf("") }
     var buttonHeight by rememberSaveable { mutableStateOf(0) }
@@ -59,8 +62,33 @@ fun PostScreen(
                 if (uri != null) {
                     val path = loginViewModel.uploadImage(uri)
                     scope.launch {
-                        val url = loginViewModel.getImageDownloadUrl(path)
-                        Log.d("123321","url: $url")
+                        delay(5000)
+                        loginViewModel.getImageDownloadUrl(path)
+                        delay(5000)
+                        val downloadUri = imageDownloadUrlProduceResult.tryReceive().getOrNull()
+                        downloadUri?.let {
+                            feedViewModel.uploadNewUserPost(
+                                UserPost(
+                                    it.toString(),
+                                    postText,
+                                    username = currentUser?.username
+                                ),
+                                currentUser?.id
+                            )
+                        }
+//                        val posts = currentUser?.posts?.toMutableList()
+//                        posts?.add(UserPost(
+//                            downloadUri?.toString(),
+//                            postText,
+//                            username = currentUser.username
+//                        ))
+//                        loginViewModel.currentUser.value = DvUser(
+//                            currentUser?.id,
+//                            currentUser?.username,
+//                            currentUser?.password,
+//                            posts,
+//                            currentUser?.notifications
+//                        )
                     }
                 }
             }

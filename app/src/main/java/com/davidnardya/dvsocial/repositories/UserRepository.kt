@@ -4,6 +4,7 @@ import android.net.Uri
 import android.util.Log
 import com.davidnardya.dvsocial.api.UserApi
 import com.davidnardya.dvsocial.model.DvUser
+import com.davidnardya.dvsocial.model.UserPost
 import com.davidnardya.dvsocial.utils.Constants
 import com.davidnardya.dvsocial.utils.Constants.DID_LOG_IN
 import com.davidnardya.dvsocial.utils.Constants.PASSWORD
@@ -18,9 +19,12 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.database
 import com.google.firebase.database.getValue
 import com.google.firebase.storage.FirebaseStorage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -31,7 +35,7 @@ class UserRepository @Inject constructor(
     private val userPreferencesDataStore: UserPreferencesDataStore
 ) {
     private val dBRef: DatabaseReference = FirebaseDatabase.getInstance().reference
-    private val imageDBRef = FirebaseStorage.getInstance().reference
+    private val imageDBRef = FirebaseStorage.getInstance()
 
 
     private val userList = MutableStateFlow(mutableListOf<DvUser>())
@@ -128,14 +132,37 @@ class UserRepository @Inject constructor(
 
     fun uploadImage(uri: Uri): String {
         val timeStamp = SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(Date())
-        val storageReference = imageDBRef.child("images/${timeStamp}${System.currentTimeMillis()}.jpg")
+        val storageReference = imageDBRef.reference.child("images/${timeStamp}${System.currentTimeMillis()}.jpg")
         storageReference.putFile(uri)
         return storageReference.path
     }
 
-    suspend fun getImageDownloadUrl(path: String): String {
-        var result = ""
+    fun getImageDownloadUrl(path: String, coroutineScope: CoroutineScope) {
 
-        return result
+        imageDBRef.getReference(path).downloadUrl.addOnSuccessListener {
+            coroutineScope.launch {
+                imageDownloadUrlProduceResult.send(it)
+            }
+        }.addOnFailureListener {
+            Log.e("123321 UserRepository getImageDownloadUrl","error: ${it.message}")
+        }
+    }
+
+    fun uploadNewUserPost(newPost: UserPost, userId: String?) {
+        val database = Firebase.database
+        val myRef = database.getReference("userList")
+
+        val key = userId?.let {
+            myRef
+                .child(it)
+                .child("posts").push().key
+        }
+        val postValues = newPost.toMap()
+        val childUpdate = hashMapOf<String, Any>(
+            "/$userId/posts/$key" to postValues
+        )
+        myRef.updateChildren(childUpdate)
     }
 }
+
+val imageDownloadUrlProduceResult = Channel<Uri>()

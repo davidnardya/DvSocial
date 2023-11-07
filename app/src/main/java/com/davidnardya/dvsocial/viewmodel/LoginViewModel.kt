@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.davidnardya.dvsocial.events.UserEvents
 import com.davidnardya.dvsocial.model.DvUser
+import com.davidnardya.dvsocial.model.UserPost
 import com.davidnardya.dvsocial.repositories.UserRepository
 import com.davidnardya.dvsocial.utils.userLoginAuthProduceResult
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -96,5 +97,7 @@ class LoginViewModel @Inject constructor(private val userRepository: UserReposit
     }
 
     fun uploadImage(uri: Uri): String = userRepository.uploadImage(uri)
-    suspend fun getImageDownloadUrl(path: String): String = userRepository.getImageDownloadUrl(path)
+    fun getImageDownloadUrl(path: String) {
+        userRepository.getImageDownloadUrl(path, viewModelScope)
+    }
 }

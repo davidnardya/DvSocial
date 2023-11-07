@@ -1,6 +1,5 @@
 package com.davidnardya.dvsocial.viewmodel
 
-import android.net.Uri
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -60,4 +59,7 @@ class FeedViewModel @Inject constructor(private val userRepository: UserReposito
             }
         }
     }
+
+    fun uploadNewUserPost(newPost: UserPost, id: String?) = userRepository.uploadNewUserPost(newPost, id)
+
 }
