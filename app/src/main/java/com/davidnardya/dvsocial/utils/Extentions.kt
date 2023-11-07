@@ -27,13 +27,11 @@ fun String.cleanSpaces(): String {
 
 fun Context.createImageFile(): File {
     // Create an image file name
-//    val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
     val timeStamp = SimpleDateFormat("yyyy,MM,dd_HH:mm:ss", Locale.getDefault()).format(Date())
     val imageFileName = "JPEG_" + timeStamp + "_"
-    val image = File.createTempFile(
+    return File.createTempFile(
         imageFileName, /* prefix */
         ".jpg", /* suffix */
         externalCacheDir      /* directory */
     )
-    return image
 }

@@ -78,7 +78,7 @@ fun SetupNavGraph(
         composable(
             route = Screen.Camera.route
         ) {
-            CameraScreen()
+            PhotoPickScreen()
         }
     }
 }

@@ -1,11 +1,14 @@
 package com.davidnardya.dvsocial.navigation.screens
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.net.Uri
+import android.provider.MediaStore
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -22,15 +25,17 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
-import coil.compose.rememberAsyncImagePainter
 import com.davidnardya.dvsocial.BuildConfig
 import com.davidnardya.dvsocial.utils.createImageFile
 import com.davidnardya.dvsocial.utils.showToast
+import java.io.File
+import java.io.FileOutputStream
 import java.util.Objects
 
 @Composable
-fun CameraScreen() {
+fun PhotoPickScreen() {
 
+    //Open camera variables
     val context = LocalContext.current
     val file = context.createImageFile()
     val uri = FileProvider.getUriForFile(
@@ -41,6 +46,7 @@ fun CameraScreen() {
     var capturedImageUri by remember {
         mutableStateOf<Uri>(Uri.EMPTY)
     }
+
 
     val cameraLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) {
@@ -58,6 +64,18 @@ fun CameraScreen() {
         }
     }
 
+    //Gallery pick variables
+    var selectedImageUri by remember {
+        mutableStateOf<Uri?>(null)
+    }
+
+    val singlePhotoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia(),
+        onResult = {
+            selectedImageUri = it
+        }
+    )
+
     Column(
         Modifier
             .fillMaxSize()
@@ -74,18 +92,38 @@ fun CameraScreen() {
                 permissionLauncher.launch(Manifest.permission.CAMERA)
             }
         }) {
-            Text(text = "Capture Image From Camera")
+            Text(text = "Capture image from camera")
+        }
+
+        Button(
+            onClick = {
+                singlePhotoPickerLauncher.launch(
+                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                )
+            }
+        ) {
+            Text(text = "Pick photo from gallery")
         }
     }
 
     if (capturedImageUri.path?.isNotEmpty() == true) {
-        Image(
-            modifier = Modifier
-                .padding(16.dp, 8.dp),
-            painter = rememberAsyncImagePainter(capturedImageUri),
-            contentDescription = null
-        )
+        saveImageToInternalStorage(context,capturedImageUri)
     }
 
 
+}
+
+fun saveImageToInternalStorage(context: Context, uri: Uri) {
+
+    val bitmap = MediaStore.Images.Media.getBitmap(context.contentResolver,uri)
+    val fileName = "image_${System.currentTimeMillis()}.jpg"
+    val saveDir = context.externalCacheDir
+    val filePath = File(saveDir, fileName).absolutePath
+
+    val out = FileOutputStream(filePath)
+    bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out)
+    out.flush()
+    out.close()
+
+    val imageUri = MediaStore.Images.Media.insertImage(context.contentResolver, filePath, fileName, "Saved image")
 }
