@@ -25,6 +25,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.navigation.NavHostController
 import com.davidnardya.dvsocial.BuildConfig
 import com.davidnardya.dvsocial.utils.createImageFile
 import com.davidnardya.dvsocial.utils.showToast
@@ -33,8 +34,7 @@ import java.io.FileOutputStream
 import java.util.Objects
 
 @Composable
-fun PhotoPickScreen() {
-
+fun PhotoPickScreen(navHostController: NavHostController) {
     //Open camera variables
     val context = LocalContext.current
     val file = context.createImageFile()
@@ -110,6 +110,18 @@ fun PhotoPickScreen() {
         saveImageToInternalStorage(context,capturedImageUri)
     }
 
+    if(selectedImageUri?.path?.isNotEmpty() == true) {
+        Screen.Post.uri = selectedImageUri
+        navHostController.navigate(route = Screen.Post.route) {
+            popUpTo(Screen.PhotoPick.route) {
+                inclusive = true
+            }
+            popUpTo(Screen.Post.route) {
+                inclusive = true
+            }
+        }
+        selectedImageUri = null
+    }
 
 }
 
@@ -119,11 +131,10 @@ fun saveImageToInternalStorage(context: Context, uri: Uri) {
     val fileName = "image_${System.currentTimeMillis()}.jpg"
     val saveDir = context.externalCacheDir
     val filePath = File(saveDir, fileName).absolutePath
-
     val out = FileOutputStream(filePath)
     bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out)
     out.flush()
     out.close()
 
-    val imageUri = MediaStore.Images.Media.insertImage(context.contentResolver, filePath, fileName, "Saved image")
+    MediaStore.Images.Media.insertImage(context.contentResolver, filePath, fileName, "Saved image")
 }

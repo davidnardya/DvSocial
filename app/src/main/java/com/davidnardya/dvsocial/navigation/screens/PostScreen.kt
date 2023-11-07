@@ -1,7 +1,11 @@
 package com.davidnardya.dvsocial.navigation.screens
 
+import android.net.Uri
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
@@ -10,6 +14,7 @@ import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -17,18 +22,24 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import coil.compose.rememberAsyncImagePainter
 import com.davidnardya.dvsocial.utils.Constants
 import com.davidnardya.dvsocial.viewmodel.FeedViewModel
 import com.davidnardya.dvsocial.viewmodel.LoginViewModel
+import java.io.File
 
 @Composable
 fun PostScreen(
     navController: NavHostController,
     feedViewModel: FeedViewModel,
-    loginViewModel: LoginViewModel
+    loginViewModel: LoginViewModel,
+    uri: Uri?
 ) {
     var postText by rememberSaveable { mutableStateOf("") }
     var buttonHeight by rememberSaveable { mutableStateOf(0) }
+    var selectedImageUri by remember {
+        mutableStateOf<Uri?>(null)
+    }
     val screenHeight = LocalConfiguration.current.screenHeightDp
     Column(
         modifier = Modifier.padding(6.dp)
@@ -36,7 +47,7 @@ fun PostScreen(
         Button(
             modifier = Modifier.fillMaxWidth(),
             onClick = {
-                navController.navigate(Screen.Camera.route)
+                navController.navigate(Screen.PhotoPick.route)
             }
         ) {
             Text(text = "Add a new picture")
@@ -65,5 +76,14 @@ fun PostScreen(
         ) {
             Text(text = "POST")
         }
+        if(selectedImageUri?.path != null && selectedImageUri?.path != "") {
+            Image(
+                modifier = Modifier
+                    .fillMaxSize(),
+                painter = rememberAsyncImagePainter(selectedImageUri),
+                contentDescription = ""
+            )
+        }
     }
+    selectedImageUri = uri
 }

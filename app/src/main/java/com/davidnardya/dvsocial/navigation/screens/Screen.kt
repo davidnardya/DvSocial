@@ -1,6 +1,8 @@
 package com.davidnardya.dvsocial.navigation.screens
 
-sealed class Screen(val route: String) {
+import android.net.Uri
+
+sealed class Screen(val route: String, var uri:Uri? = null) {
     object Login: Screen("LoginScreen")
     object Registration: Screen("RegistrationScreen")
     object Feed: Screen("FeedScreen")
@@ -10,5 +12,5 @@ sealed class Screen(val route: String) {
     object Notifications: Screen("NotificationsScreen")
     object Post: Screen("PostScreen")
     object Comment: Screen("CommentScreen")
-    object Camera: Screen("CameraScreen")
+    object PhotoPick: Screen("CameraScreen")
 }
