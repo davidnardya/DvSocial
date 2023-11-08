@@ -8,6 +8,7 @@ import com.davidnardya.dvsocial.model.UserPost
 import com.davidnardya.dvsocial.utils.Constants
 import com.davidnardya.dvsocial.utils.Constants.DID_LOG_IN
 import com.davidnardya.dvsocial.utils.Constants.PASSWORD
+import com.davidnardya.dvsocial.utils.Constants.USER_ID
 import com.davidnardya.dvsocial.utils.Constants.USER_NAME
 import com.davidnardya.dvsocial.utils.UserPreferencesDataStore
 import com.google.firebase.Firebase
@@ -89,6 +90,7 @@ class UserRepository @Inject constructor(
                             Constants.mockNotifications
                         )
                     )
+                    userPreferencesDataStore.savePreferencesDataStoreValues(USER_ID, it.key.toString())
                 }
             }
             userPreferencesDataStore.savePreferencesDataStoreValues(USER_NAME, username)
@@ -96,6 +98,7 @@ class UserRepository @Inject constructor(
         } else {
             userPreferencesDataStore.savePreferencesDataStoreValues(USER_NAME, username)
             userPreferencesDataStore.savePreferencesDataStoreValues(PASSWORD, password)
+            userPreferencesDataStore.savePreferencesDataStoreValues(USER_ID, "")
         }
 
 
@@ -104,6 +107,7 @@ class UserRepository @Inject constructor(
     suspend fun clearDataStore() {
         userPreferencesDataStore.removeKey(USER_NAME)
         userPreferencesDataStore.removeKey(PASSWORD)
+        userPreferencesDataStore.removeKey(USER_ID)
         userPreferencesDataStore.removeKey(DID_LOG_IN)
         userPreferencesDataStore.clear()
     }
@@ -113,8 +117,11 @@ class UserRepository @Inject constructor(
             userPreferencesDataStore.getPreferencesDataStoreValues(USER_NAME, "").toString()
         val password =
             userPreferencesDataStore.getPreferencesDataStoreValues(PASSWORD, "").toString()
+        val id =
+            userPreferencesDataStore.getPreferencesDataStoreValues(USER_ID, "").toString()
         Log.d("123321", "userName $userName password $password")
         return DvUser(
+            id = id,
             username = userName,
             password = password,
             posts = /*userList.value[0].posts ?:*/ Constants.mockPosts,

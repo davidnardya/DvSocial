@@ -39,6 +39,7 @@ object Constants {
     const val BASE_URL = "https://dvsocial-9eff2-default-rtdb.europe-west1.firebasedatabase.app/"
     const val USER_NAME = "username"
     const val PASSWORD = "password"
+    const val USER_ID = "userid"
     const val DID_LOG_IN = "didLogIn"
 
     const val USER_PROFILE_ID = "user_profile"

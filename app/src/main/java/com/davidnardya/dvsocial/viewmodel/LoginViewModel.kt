@@ -97,7 +97,5 @@ class LoginViewModel @Inject constructor(private val userRepository: UserReposit
     }
 
     fun uploadImage(uri: Uri): String = userRepository.uploadImage(uri)
-    fun getImageDownloadUrl(path: String) {
-        userRepository.getImageDownloadUrl(path, viewModelScope)
-    }
+    fun getImageDownloadUrl(path: String) = userRepository.getImageDownloadUrl(path, viewModelScope)
 }
