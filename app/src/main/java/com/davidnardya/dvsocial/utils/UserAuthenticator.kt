@@ -17,6 +17,7 @@ class UserAuthenticator @Inject constructor(private val userRepository: UserRepo
 
     private suspend fun authLogin(username: String, password: String) {
         var result = false
+        var id = ""
         userRepository.getUserListFlow().value.forEach { user ->
             if (
                 user.username != "" && user.password != "" &&
@@ -24,11 +25,12 @@ class UserAuthenticator @Inject constructor(private val userRepository: UserRepo
                 !userRepository.getUserLoggedIn()
             ) {
                 result = true
+                id = user.id.toString()
                 userLoginAuthProduceResult.send(true)
             }
         }
         if (result) {
-            userRepository.saveUserInfo(username, password)
+            userRepository.saveUserInfo(username, password, id = id)
         } else {
             userLoginAuthProduceResult.send(false)
         }

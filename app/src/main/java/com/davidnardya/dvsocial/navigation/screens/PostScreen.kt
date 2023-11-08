@@ -71,7 +71,10 @@ fun PostScreen(
                                 UserPost(
                                     it.toString(),
                                     postText,
-                                    username = currentUser?.username
+                                    Constants.commentsListOne,
+                                    false,
+                                    0,
+                                    currentUser?.username
                                 ),
                                 currentUser?.id
                             )

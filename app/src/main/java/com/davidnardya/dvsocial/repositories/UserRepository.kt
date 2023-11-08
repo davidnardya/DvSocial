@@ -4,6 +4,7 @@ import android.net.Uri
 import android.util.Log
 import com.davidnardya.dvsocial.api.UserApi
 import com.davidnardya.dvsocial.model.DvUser
+import com.davidnardya.dvsocial.model.UserComment
 import com.davidnardya.dvsocial.model.UserPost
 import com.davidnardya.dvsocial.utils.Constants
 import com.davidnardya.dvsocial.utils.Constants.DID_LOG_IN
@@ -72,7 +73,7 @@ class UserRepository @Inject constructor(
         currentUserFlow.tryEmit(getUserInfo())
     }
 
-    suspend fun saveUserInfo(username: String, password: String, isNewUser: Boolean = false) {
+    suspend fun saveUserInfo(username: String, password: String, isNewUser: Boolean = false, id: String = "") {
 
         if (username != "" && password != "") {
 
@@ -92,6 +93,8 @@ class UserRepository @Inject constructor(
                     )
                     userPreferencesDataStore.savePreferencesDataStoreValues(USER_ID, it.key.toString())
                 }
+            } else {
+                    userPreferencesDataStore.savePreferencesDataStoreValues(USER_ID, id)
             }
             userPreferencesDataStore.savePreferencesDataStoreValues(USER_NAME, username)
             userPreferencesDataStore.savePreferencesDataStoreValues(PASSWORD, password)
@@ -155,20 +158,48 @@ class UserRepository @Inject constructor(
         }
     }
 
-    fun uploadNewUserPost(newPost: UserPost, userId: String?) {
+    suspend fun uploadNewUserPost(newPost: UserPost, userId: String?) {
+        //TODO: Need to find a way to update child instead of deletion and re-uploading
+        if(userId == "null" || userId == null) {
+            return
+        }
         val database = Firebase.database
         val myRef = database.getReference("userList")
 
-        val key = userId?.let {
-            myRef
-                .child(it)
-                .child("posts").push().key
+        val posts = currentUserFlow.value.posts?.toMutableList()
+        posts?.add(newPost)
+
+        myRef.child(userId).removeValue()
+
+
+        myRef.push().let {
+            it.setValue(
+                DvUser(
+                    it.key,
+                    currentUserFlow.value.username,
+                    currentUserFlow.value.password,
+                    posts,
+                    currentUserFlow.value.notifications
+                )
+            )
+            userPreferencesDataStore.savePreferencesDataStoreValues(USER_ID, it.key.toString())
         }
-        val postValues = newPost.toMap()
-        val childUpdate = hashMapOf<String, Any>(
-            "/$userId/posts/$key" to postValues
-        )
-        myRef.updateChildren(childUpdate)
+
+//        val key = userId?.let {
+//            myRef
+//                .child(it)
+//                .child("posts").push().key
+//        }
+
+//        val postValues = newPost.toMap()
+//        val childUpdate = hashMapOf<String, Any>(
+//            "/$userId/posts/$key" to postValues
+//        )
+//        val childUpdate = mapOf<String, Any>(
+//            "/$userId/posts/$key" to newPost
+//        )
+//        myRef.updateChildren(childUpdate)
+
     }
 }
 
