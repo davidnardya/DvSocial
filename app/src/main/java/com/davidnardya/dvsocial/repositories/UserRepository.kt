@@ -2,11 +2,10 @@ package com.davidnardya.dvsocial.repositories
 
 import android.net.Uri
 import android.util.Log
-import androidx.lifecycle.MutableLiveData
 import com.davidnardya.dvsocial.api.UserApi
+import com.davidnardya.dvsocial.events.UserEvents
 import com.davidnardya.dvsocial.model.DvUser
 import com.davidnardya.dvsocial.model.UserPost
-import com.davidnardya.dvsocial.utils.Constants
 import com.davidnardya.dvsocial.utils.Constants.DID_LOG_IN
 import com.davidnardya.dvsocial.utils.Constants.PASSWORD
 import com.davidnardya.dvsocial.utils.Constants.USER_ID
@@ -23,8 +22,7 @@ import com.google.firebase.database.getValue
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -39,13 +37,14 @@ class UserRepository @Inject constructor(
     private val dBRef: DatabaseReference = FirebaseDatabase.getInstance().reference
     private val imageDBRef = FirebaseStorage.getInstance()
 
-    val currentUser = MutableLiveData<DvUser>()
+    var eventsFlow: MutableSharedFlow<UserEvents>? = null
+//    val currentUser = MutableLiveData<DvUser>()
 
     private val userList = MutableStateFlow(mutableListOf<DvUser>())
     fun getUserListFlow(): MutableStateFlow<MutableList<DvUser>> = userList
 
-    private val currentUserFlow = MutableStateFlow(Constants.emptyUser)
-    fun getCurrentUserFlow(): Flow<DvUser> = currentUserFlow
+//    private val currentUserFlow = MutableStateFlow(Constants.emptyUser)
+//    fun getCurrentUserFlow(): Flow<DvUser> = currentUserFlow
 
 
     fun subscribeToUserListFlow() {
@@ -70,22 +69,22 @@ class UserRepository @Inject constructor(
     }
 
     suspend fun subscribeToCurrentUserFlow() {
-        delay(1000)
-        currentUser.value?.let { currentUserFlow.tryEmit(it) }
+        val username = getStringFromPreferenceDataStore(USER_NAME)
+        val password = getStringFromPreferenceDataStore(PASSWORD)
+        eventsFlow?.tryEmit(UserEvents.OnLogIn(username,password))
+//        currentUser.value?.let { currentUserFlow.tryEmit(it) }
+
     }
 
     suspend fun saveLoggedInUser(user: DvUser) {
-        currentUser.value = user
+        currentUserProduceResult.send(user)
         user.username?.let { userPreferencesDataStore.savePreferencesDataStoreValues(USER_NAME, it) }
         user.password?.let { userPreferencesDataStore.savePreferencesDataStoreValues(PASSWORD, it) }
         user.id?.let { userPreferencesDataStore.savePreferencesDataStoreValues(USER_ID, it) }
-        saveUserLoggedIn(true)
+        saveIsUserLoggedIn(true)
     }
 
-    suspend fun registerNewUser(
-        username: String,
-        password: String
-    ) {
+    suspend fun registerNewUser(username: String, password: String) {
 
         if (username != "" && password != "") {
             val database = Firebase.database
@@ -93,11 +92,7 @@ class UserRepository @Inject constructor(
 
             myRef.push().let {
                 it.setValue(
-                    DvUser(
-                        it.key,
-                        username,
-                        password
-                    )
+                    DvUser(it.key, username, password)
                 )
                 userPreferencesDataStore.savePreferencesDataStoreValues(USER_ID, it.key.toString())
             }
@@ -110,7 +105,7 @@ class UserRepository @Inject constructor(
         userPreferencesDataStore.savePreferencesDataStoreValues(USER_NAME, "")
         userPreferencesDataStore.savePreferencesDataStoreValues(PASSWORD, "")
         userPreferencesDataStore.savePreferencesDataStoreValues(USER_ID, "")
-        saveUserLoggedIn(false)
+        saveIsUserLoggedIn(false)
         clearDataStore()
     }
 
@@ -120,6 +115,10 @@ class UserRepository @Inject constructor(
         userPreferencesDataStore.removeKey(USER_ID)
         userPreferencesDataStore.removeKey(DID_LOG_IN)
         userPreferencesDataStore.clear()
+    }
+
+    suspend fun getStringFromPreferenceDataStore(key: String) : String {
+        return userPreferencesDataStore.getPreferencesDataStoreValues(key, "").toString()
     }
 
 //    suspend fun getUserInfo(): DvUser {
@@ -139,11 +138,11 @@ class UserRepository @Inject constructor(
 //        )
 //    }
 
-    private suspend fun saveUserLoggedIn(didLogIn: Boolean) {
+    private suspend fun saveIsUserLoggedIn(didLogIn: Boolean) {
         userPreferencesDataStore.savePreferencesDataStoreValues(DID_LOG_IN, didLogIn)
     }
 
-    suspend fun getUserLoggedIn(): Boolean {
+    suspend fun getIsUserLoggedIn(): Boolean {
         return userPreferencesDataStore.getPreferencesDataStoreValues(DID_LOG_IN, false) == true
     }
 
@@ -166,7 +165,7 @@ class UserRepository @Inject constructor(
         }
     }
 
-    suspend fun uploadNewUserPost(newPost: UserPost, userId: String?) {
+    suspend fun uploadNewUserPost(newPost: UserPost, userId: String?, user: DvUser?) {
         //TODO: Need to find a way to update child instead of deletion and re-uploading
         if (userId == "null" || userId == null) {
             return
@@ -174,7 +173,7 @@ class UserRepository @Inject constructor(
         val database = Firebase.database
         val myRef = database.getReference("userList")
 
-        val posts = currentUser.value?.posts?.toMutableList()
+        val posts = user?.posts?.toMutableList()
         posts?.add(newPost)
 
         myRef.child(userId).removeValue()
@@ -182,10 +181,10 @@ class UserRepository @Inject constructor(
         myRef.push().let {
             val newUser = DvUser(
                 it.key,
-                currentUser.value?.username,
-                currentUser.value?.password,
+                user?.username,
+                user?.password,
                 posts,
-                currentUser.value?.notifications
+                user?.notifications
             )
             it.setValue(
                 newUser
@@ -214,3 +213,4 @@ class UserRepository @Inject constructor(
 }
 
 val imageDownloadUrlProduceResult = Channel<Uri>()
+val currentUserProduceResult = Channel<DvUser>()

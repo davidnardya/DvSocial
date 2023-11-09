@@ -19,11 +19,19 @@ class UserAuthenticator @Inject constructor(private val userRepository: UserRepo
     private suspend fun authLogin(username: String, password: String) {
         var result = false
         var loggedUser: DvUser
+
+        val usernameFromPDS = userRepository.getStringFromPreferenceDataStore(Constants.USER_NAME)
+        val passwordFromPDS = userRepository.getStringFromPreferenceDataStore(Constants.PASSWORD)
+
         userRepository.getUserListFlow().value.forEach { user ->
             if (
                 user.username != "" && user.password != "" &&
                 user.username == username && user.password == password &&
-                !userRepository.getUserLoggedIn()
+                !userRepository.getIsUserLoggedIn() ||
+                user.username != "" && user.password != "" &&
+                user.username == usernameFromPDS && user.password == passwordFromPDS &&
+                !userRepository.getIsUserLoggedIn()
+
             ) {
                 result = true
                 loggedUser = user

@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import com.davidnardya.dvsocial.viewmodel.FeedViewModel
 
 @Composable
-fun SplashScreen(viewModel: FeedViewModel) {
+fun SplashScreen(viewModel: FeedViewModel? = null) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -19,5 +19,7 @@ fun SplashScreen(viewModel: FeedViewModel) {
         CircularProgressIndicator()
     }
 
-    viewModel.checkFeedPostList()
+
+    viewModel?.checkFeedPostList()
+
 }

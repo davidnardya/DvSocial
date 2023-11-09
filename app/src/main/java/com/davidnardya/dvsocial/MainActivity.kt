@@ -75,6 +75,7 @@ class MainActivity : ComponentActivity() {
                 it.username?.isNotEmpty() == true && it.password?.isNotEmpty() == true &&
                 it.username != "null" && it.password != "null"
             ) {
+                Log.d("123321","it.username ${it.username}")
                 lifecycleScope.launch {
                     if(loginViewModel.getUserLoggedIn()) {
                         navController.navigate(route = Screen.Splash.route) {
@@ -99,7 +100,11 @@ class MainActivity : ComponentActivity() {
                     popUpTo(Screen.Feed.route) {
                         inclusive = true
                     }
+                    popUpTo(Screen.Post.route) {
+                        inclusive = true
+                    }
                 }
+                feedViewModel.isLoadingComplete.value = false
             }
         }
     }

@@ -50,9 +50,10 @@ class FeedViewModel @Inject constructor(private val userRepository: UserReposito
     fun checkFeedPostList() {
         viewModelScope.launch {
             var i = true
+            userRepository.subscribeToCurrentUserFlow()
             while (i) {
                 delay(1000L)
-                if (getFeedPostList().isNotEmpty() && userRepository.getUserLoggedIn()) {
+                if (getFeedPostList().isNotEmpty() && userRepository.getIsUserLoggedIn()) {
                     i = false
                     isLoadingComplete.value = true
                 }
@@ -60,9 +61,9 @@ class FeedViewModel @Inject constructor(private val userRepository: UserReposito
         }
     }
 
-    fun uploadNewUserPost(newPost: UserPost, id: String?) {
+    fun uploadNewUserPost(newPost: UserPost, id: String?, user: DvUser?) {
         viewModelScope.launch {
-            userRepository.uploadNewUserPost(newPost, id)
+            userRepository.uploadNewUserPost(newPost, id, user)
         }
     }
 

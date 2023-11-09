@@ -1,13 +1,19 @@
 package com.davidnardya.dvsocial.navigation
 
+import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.davidnardya.dvsocial.model.UserPost
 import com.davidnardya.dvsocial.navigation.screens.*
+import com.davidnardya.dvsocial.utils.Constants
 import com.davidnardya.dvsocial.viewmodel.FeedViewModel
 import com.davidnardya.dvsocial.viewmodel.LoginViewModel
+import kotlinx.coroutines.delay
 
 @Composable
 fun SetupNavGraph(
@@ -16,19 +22,28 @@ fun SetupNavGraph(
     feedViewModel: FeedViewModel,
     loginViewModel: LoginViewModel
 ) {
-    val user = loginViewModel.getCurrentUser()
+//    val user by loginViewModel.currentUser.observeAsState()
+
+    LaunchedEffect(loginViewModel.currentUser.value != null) {
+        var i = true
+        while(i) {
+            delay(1000)
+            loginViewModel.setCurrentUser()
+            Log.d("123321","loginViewModel.currentUser.value ${loginViewModel.currentUser.value}")
+            if(loginViewModel.currentUser.value != null) {
+                i = false
+            }
+        }
+    }
+
     NavHost(
         navController = navHostController,
         startDestination =
-        if (
-            user?.username != null &&
-            user.username != "" && user.password != "" &&
-            user.username != "null" && user.password != "null"
-        ) {
-            Screen.Splash.route
-        } else {
+//        if(user != null) {
+//            Screen.Splash.route
+//        } else {
             Screen.Login.route
-        }
+//        }
     ) {
         composable(
             route = Screen.Login.route
@@ -81,4 +96,16 @@ fun SetupNavGraph(
             PhotoPickScreen(navHostController)
         }
     }
+
+//    LaunchedEffect(key1 = true) {
+//        delay(5000)
+//        if(user != null && user?.id != "") {
+//            navHostController.navigate(Screen.Splash.route) {
+//                popUpTo(Screen.Login.route) {
+//                    inclusive = true
+//                }
+//            }
+//        }
+//    }
+
 }

@@ -44,10 +44,14 @@ fun PostScreen(
     val scope = rememberCoroutineScope()
     var postText by rememberSaveable { mutableStateOf("") }
     var buttonHeight by rememberSaveable { mutableStateOf(0) }
+    var showSpinner by rememberSaveable { mutableStateOf(false) }
     var selectedImageUri by remember {
         mutableStateOf<Uri?>(null)
     }
     val screenHeight = LocalConfiguration.current.screenHeightDp
+    if (showSpinner) {
+        SplashScreen(feedViewModel)
+    }
     Column(
         modifier = Modifier.padding(6.dp)
     ) {
@@ -60,13 +64,13 @@ fun PostScreen(
             onClick = {
                 //Add new post to user's post list
                 if (uri != null) {
+                    showSpinner = true
                     val path = loginViewModel.uploadImage(uri)
                     scope.launch {
-                        delay(5000)
+                        delay(2000)
                         loginViewModel.getImageDownloadUrl(path)
-                        delay(5000)
-                        val downloadUri = imageDownloadUrlProduceResult.tryReceive().getOrNull()
-                        downloadUri?.let {
+                        delay(3000)
+                        imageDownloadUrlProduceResult.tryReceive().getOrNull()?.let {
                             feedViewModel.uploadNewUserPost(
                                 UserPost(
                                     it.toString(),
@@ -76,9 +80,20 @@ fun PostScreen(
                                     0,
                                     currentUser?.username
                                 ),
-                                currentUser?.id
+                                currentUser?.id,
+                                loginViewModel.currentUser.value
                             )
                         }
+                        delay(3000)
+                        showSpinner = false
+//                        navController.navigate(Screen.Feed.route) {
+//                            popUpTo(Screen.Post.route) {
+//                                inclusive = true
+//                            }
+//                            popUpTo(Screen.Splash.route) {
+//                                inclusive = true
+//                            }
+//                        }
 //                        val posts = currentUser?.posts?.toMutableList()
 //                        posts?.add(UserPost(
 //                            downloadUri?.toString(),
