@@ -97,8 +97,6 @@ class UserRepository @Inject constructor(
                         it.key,
                         username,
                         password
-//                            Constants.mockPosts,
-//                            Constants.mockNotifications
                     )
                 )
                 userPreferencesDataStore.savePreferencesDataStoreValues(USER_ID, it.key.toString())
@@ -182,16 +180,19 @@ class UserRepository @Inject constructor(
         myRef.child(userId).removeValue()
 
         myRef.push().let {
-            it.setValue(
-                DvUser(
-                    it.key,
-                    currentUser.value?.username,
-                    currentUser.value?.password,
-                    posts,
-                    currentUser.value?.notifications
-                )
+            val newUser = DvUser(
+                it.key,
+                currentUser.value?.username,
+                currentUser.value?.password,
+                posts,
+                currentUser.value?.notifications
             )
-            userPreferencesDataStore.savePreferencesDataStoreValues(USER_ID, it.key.toString())
+            it.setValue(
+                newUser
+            )
+            saveLoggedInUser(newUser)
+//            currentUser.value = newUser
+//            userPreferencesDataStore.savePreferencesDataStoreValues(USER_ID, it.key.toString())
         }
 
 //        val key = userId?.let {
