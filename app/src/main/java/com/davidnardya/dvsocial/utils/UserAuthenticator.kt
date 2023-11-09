@@ -1,6 +1,7 @@
 package com.davidnardya.dvsocial.utils
 
 import com.davidnardya.dvsocial.events.UserEvents
+import com.davidnardya.dvsocial.model.DvUser
 import com.davidnardya.dvsocial.repositories.UserRepository
 import kotlinx.coroutines.channels.Channel
 import javax.inject.Inject
@@ -17,7 +18,7 @@ class UserAuthenticator @Inject constructor(private val userRepository: UserRepo
 
     private suspend fun authLogin(username: String, password: String) {
         var result = false
-        var id = ""
+        var loggedUser: DvUser
         userRepository.getUserListFlow().value.forEach { user ->
             if (
                 user.username != "" && user.password != "" &&
@@ -25,13 +26,12 @@ class UserAuthenticator @Inject constructor(private val userRepository: UserRepo
                 !userRepository.getUserLoggedIn()
             ) {
                 result = true
-                id = user.id.toString()
+                loggedUser = user
+                userRepository.saveLoggedInUser(loggedUser)
                 userLoginAuthProduceResult.send(true)
             }
         }
-        if (result) {
-            userRepository.saveUserInfo(username, password, id = id)
-        } else {
+        if (!result) {
             userLoginAuthProduceResult.send(false)
         }
 
@@ -47,7 +47,7 @@ class UserAuthenticator @Inject constructor(private val userRepository: UserRepo
         }
 
         if (result) {
-            userRepository.saveUserInfo(username, password, true)
+            userRepository.registerNewUser(username, password)
         }
     }
 }

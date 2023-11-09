@@ -269,7 +269,7 @@ private fun SetDrawerBody(
                 }
 
                 Constants.LOGOUT_ID -> {
-                    viewModel.userLogOut()
+                    viewModel.logUserOut()
                     navController.navigate(route = Screen.Login.route) {
                         popUpTo(Screen.Feed.route) {
                             inclusive = true

@@ -2,9 +2,9 @@ package com.davidnardya.dvsocial.repositories
 
 import android.net.Uri
 import android.util.Log
+import androidx.lifecycle.MutableLiveData
 import com.davidnardya.dvsocial.api.UserApi
 import com.davidnardya.dvsocial.model.DvUser
-import com.davidnardya.dvsocial.model.UserComment
 import com.davidnardya.dvsocial.model.UserPost
 import com.davidnardya.dvsocial.utils.Constants
 import com.davidnardya.dvsocial.utils.Constants.DID_LOG_IN
@@ -39,6 +39,7 @@ class UserRepository @Inject constructor(
     private val dBRef: DatabaseReference = FirebaseDatabase.getInstance().reference
     private val imageDBRef = FirebaseStorage.getInstance()
 
+    val currentUser = MutableLiveData<DvUser>()
 
     private val userList = MutableStateFlow(mutableListOf<DvUser>())
     fun getUserListFlow(): MutableStateFlow<MutableList<DvUser>> = userList
@@ -70,44 +71,52 @@ class UserRepository @Inject constructor(
 
     suspend fun subscribeToCurrentUserFlow() {
         delay(1000)
-        currentUserFlow.tryEmit(getUserInfo())
+        currentUser.value?.let { currentUserFlow.tryEmit(it) }
     }
 
-    suspend fun saveUserInfo(username: String, password: String, isNewUser: Boolean = false, id: String = "") {
+    suspend fun saveLoggedInUser(user: DvUser) {
+        currentUser.value = user
+        user.username?.let { userPreferencesDataStore.savePreferencesDataStoreValues(USER_NAME, it) }
+        user.password?.let { userPreferencesDataStore.savePreferencesDataStoreValues(PASSWORD, it) }
+        user.id?.let { userPreferencesDataStore.savePreferencesDataStoreValues(USER_ID, it) }
+        saveUserLoggedIn(true)
+    }
+
+    suspend fun registerNewUser(
+        username: String,
+        password: String
+    ) {
 
         if (username != "" && password != "") {
+            val database = Firebase.database
+            val myRef = database.getReference("userList")
 
-            if(isNewUser) {
-                val database = Firebase.database
-                val myRef = database.getReference("userList")
-
-                myRef.push().let {
-                    it.setValue(
-                        DvUser(
-                            it.key,
-                            username,
-                            password,
-                            Constants.mockPosts,
-                            Constants.mockNotifications
-                        )
+            myRef.push().let {
+                it.setValue(
+                    DvUser(
+                        it.key,
+                        username,
+                        password
+//                            Constants.mockPosts,
+//                            Constants.mockNotifications
                     )
-                    userPreferencesDataStore.savePreferencesDataStoreValues(USER_ID, it.key.toString())
-                }
-            } else {
-                    userPreferencesDataStore.savePreferencesDataStoreValues(USER_ID, id)
+                )
+                userPreferencesDataStore.savePreferencesDataStoreValues(USER_ID, it.key.toString())
             }
             userPreferencesDataStore.savePreferencesDataStoreValues(USER_NAME, username)
             userPreferencesDataStore.savePreferencesDataStoreValues(PASSWORD, password)
-        } else {
-            userPreferencesDataStore.savePreferencesDataStoreValues(USER_NAME, username)
-            userPreferencesDataStore.savePreferencesDataStoreValues(PASSWORD, password)
-            userPreferencesDataStore.savePreferencesDataStoreValues(USER_ID, "")
         }
-
-
     }
 
-    suspend fun clearDataStore() {
+    suspend fun logUserOut() {
+        userPreferencesDataStore.savePreferencesDataStoreValues(USER_NAME, "")
+        userPreferencesDataStore.savePreferencesDataStoreValues(PASSWORD, "")
+        userPreferencesDataStore.savePreferencesDataStoreValues(USER_ID, "")
+        saveUserLoggedIn(false)
+        clearDataStore()
+    }
+
+    private suspend fun clearDataStore() {
         userPreferencesDataStore.removeKey(USER_NAME)
         userPreferencesDataStore.removeKey(PASSWORD)
         userPreferencesDataStore.removeKey(USER_ID)
@@ -115,24 +124,24 @@ class UserRepository @Inject constructor(
         userPreferencesDataStore.clear()
     }
 
-    suspend fun getUserInfo(): DvUser {
-        val userName =
-            userPreferencesDataStore.getPreferencesDataStoreValues(USER_NAME, "").toString()
-        val password =
-            userPreferencesDataStore.getPreferencesDataStoreValues(PASSWORD, "").toString()
-        val id =
-            userPreferencesDataStore.getPreferencesDataStoreValues(USER_ID, "").toString()
-        Log.d("123321", "userName $userName password $password")
-        return DvUser(
-            id = id,
-            username = userName,
-            password = password,
-            posts = /*userList.value[0].posts ?:*/ Constants.mockPosts,
-            notifications = Constants.mockNotifications
-        )
-    }
+//    suspend fun getUserInfo(): DvUser {
+//        val userName =
+//            userPreferencesDataStore.getPreferencesDataStoreValues(USER_NAME, "").toString()
+//        val password =
+//            userPreferencesDataStore.getPreferencesDataStoreValues(PASSWORD, "").toString()
+//        val id =
+//            userPreferencesDataStore.getPreferencesDataStoreValues(USER_ID, "").toString()
+//        Log.d("123321", "userName $userName password $password")
+//        return DvUser(
+//            id = id,
+//            username = userName,
+//            password = password,
+//            posts = /*userList.value[0].posts ?:*/ Constants.mockPosts,
+//            notifications = Constants.mockNotifications
+//        )
+//    }
 
-    suspend fun saveUserLoggedIn(didLogIn: Boolean) {
+    private suspend fun saveUserLoggedIn(didLogIn: Boolean) {
         userPreferencesDataStore.savePreferencesDataStoreValues(DID_LOG_IN, didLogIn)
     }
 
@@ -142,7 +151,8 @@ class UserRepository @Inject constructor(
 
     fun uploadImage(uri: Uri): String {
         val timeStamp = SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(Date())
-        val storageReference = imageDBRef.reference.child("images/${timeStamp}${System.currentTimeMillis()}.jpg")
+        val storageReference =
+            imageDBRef.reference.child("images/${timeStamp}${System.currentTimeMillis()}.jpg")
         storageReference.putFile(uri)
         return storageReference.path
     }
@@ -154,32 +164,31 @@ class UserRepository @Inject constructor(
                 imageDownloadUrlProduceResult.send(it)
             }
         }.addOnFailureListener {
-            Log.e("123321 UserRepository getImageDownloadUrl","error: ${it.message}")
+            Log.e("UserRepository getImageDownloadUrl", "error: ${it.message}")
         }
     }
 
     suspend fun uploadNewUserPost(newPost: UserPost, userId: String?) {
         //TODO: Need to find a way to update child instead of deletion and re-uploading
-        if(userId == "null" || userId == null) {
+        if (userId == "null" || userId == null) {
             return
         }
         val database = Firebase.database
         val myRef = database.getReference("userList")
 
-        val posts = currentUserFlow.value.posts?.toMutableList()
+        val posts = currentUser.value?.posts?.toMutableList()
         posts?.add(newPost)
 
         myRef.child(userId).removeValue()
-
 
         myRef.push().let {
             it.setValue(
                 DvUser(
                     it.key,
-                    currentUserFlow.value.username,
-                    currentUserFlow.value.password,
+                    currentUser.value?.username,
+                    currentUser.value?.password,
                     posts,
-                    currentUserFlow.value.notifications
+                    currentUser.value?.notifications
                 )
             )
             userPreferencesDataStore.savePreferencesDataStoreValues(USER_ID, it.key.toString())

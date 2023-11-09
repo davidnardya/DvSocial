@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.davidnardya.dvsocial.events.UserEvents
 import com.davidnardya.dvsocial.model.DvUser
-import com.davidnardya.dvsocial.model.UserPost
 import com.davidnardya.dvsocial.repositories.UserRepository
 import com.davidnardya.dvsocial.utils.userLoginAuthProduceResult
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,7 +27,8 @@ class LoginViewModel @Inject constructor(private val userRepository: UserReposit
         extraBufferCapacity = 1
     )
 
-    val currentUser: MutableLiveData<DvUser> = MutableLiveData()
+//    val currentUser: MutableLiveData<DvUser> = MutableLiveData()
+    val currentUser = userRepository.currentUser
     private fun getCurrentUserFlow(): Flow<DvUser> = userRepository.getCurrentUserFlow()
 
     fun getCurrentUser(): DvUser? {
@@ -50,35 +50,34 @@ class LoginViewModel @Inject constructor(private val userRepository: UserReposit
         eventsFlow.tryEmit(UserEvents.OnNewUserCreated(userName, password))
     }
 
-    fun userLogOut() {
+    fun logUserOut() {
         viewModelScope.launch {
-            userRepository.saveUserInfo("", "")
-            userRepository.saveUserLoggedIn(false)
-            userRepository.clearDataStore()
+            userRepository.logUserOut()
         }
     }
 
     suspend fun userAttemptLogin(username: String, password: String): Boolean {
         var result = false
         eventsFlow.tryEmit(UserEvents.OnLogIn(username, password))
-        viewModelScope.launch {
-            val user = userRepository.getUserInfo()
-            if (userLoginAuthProduceResult.receive()) {
-                result = true
-                userRepository.saveUserLoggedIn(true)
-                currentUser.value = user
-            } else {
-                if (
-                    user.username != "" && user.password != "" &&
-                    user.username == username && user.password == password &&
-                    !userRepository.getUserLoggedIn()
-                ) {
-                    result = true
-                    userRepository.saveUserLoggedIn(true)
-                    currentUser.value = user
-                }
-            }
-        }
+//        viewModelScope.launch {
+//            val user = userRepository.getUserInfo()
+//            if (userLoginAuthProduceResult.receive()) {
+//                result = true
+//                userRepository.saveUserLoggedIn(true)
+//                currentUser.value = user
+//            } else {
+//                if (
+//                    user.username != "" && user.password != "" &&
+//                    user.username == username && user.password == password &&
+//                    !userRepository.getUserLoggedIn()
+//                ) {
+//                    result = true
+//                    userRepository.saveUserLoggedIn(true)
+//                    currentUser.value = user
+//                }
+//            }
+//        }
+        result = userLoginAuthProduceResult.receive()
         return result
     }
 
