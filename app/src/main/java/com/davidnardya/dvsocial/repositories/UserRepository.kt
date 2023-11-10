@@ -38,14 +38,9 @@ class UserRepository @Inject constructor(
     private val imageDBRef = FirebaseStorage.getInstance()
 
     var eventsFlow: MutableSharedFlow<UserEvents>? = null
-//    val currentUser = MutableLiveData<DvUser>()
 
     private val userList = MutableStateFlow(mutableListOf<DvUser>())
     fun getUserListFlow(): MutableStateFlow<MutableList<DvUser>> = userList
-
-//    private val currentUserFlow = MutableStateFlow(Constants.emptyUser)
-//    fun getCurrentUserFlow(): Flow<DvUser> = currentUserFlow
-
 
     fun subscribeToUserListFlow() {
         dBRef.addValueEventListener(object : ValueEventListener {
@@ -72,12 +67,9 @@ class UserRepository @Inject constructor(
         val username = getStringFromPreferenceDataStore(USER_NAME)
         val password = getStringFromPreferenceDataStore(PASSWORD)
         eventsFlow?.tryEmit(UserEvents.OnLogIn(username,password))
-//        currentUser.value?.let { currentUserFlow.tryEmit(it) }
-
     }
 
     suspend fun saveLoggedInUser(user: DvUser) {
-        currentUserProduceResult.send(user)
         user.username?.let { userPreferencesDataStore.savePreferencesDataStoreValues(USER_NAME, it) }
         user.password?.let { userPreferencesDataStore.savePreferencesDataStoreValues(PASSWORD, it) }
         user.id?.let { userPreferencesDataStore.savePreferencesDataStoreValues(USER_ID, it) }
@@ -120,23 +112,6 @@ class UserRepository @Inject constructor(
     suspend fun getStringFromPreferenceDataStore(key: String) : String {
         return userPreferencesDataStore.getPreferencesDataStoreValues(key, "").toString()
     }
-
-//    suspend fun getUserInfo(): DvUser {
-//        val userName =
-//            userPreferencesDataStore.getPreferencesDataStoreValues(USER_NAME, "").toString()
-//        val password =
-//            userPreferencesDataStore.getPreferencesDataStoreValues(PASSWORD, "").toString()
-//        val id =
-//            userPreferencesDataStore.getPreferencesDataStoreValues(USER_ID, "").toString()
-//        Log.d("123321", "userName $userName password $password")
-//        return DvUser(
-//            id = id,
-//            username = userName,
-//            password = password,
-//            posts = /*userList.value[0].posts ?:*/ Constants.mockPosts,
-//            notifications = Constants.mockNotifications
-//        )
-//    }
 
     private suspend fun saveIsUserLoggedIn(didLogIn: Boolean) {
         userPreferencesDataStore.savePreferencesDataStoreValues(DID_LOG_IN, didLogIn)
@@ -190,8 +165,6 @@ class UserRepository @Inject constructor(
                 newUser
             )
             saveLoggedInUser(newUser)
-//            currentUser.value = newUser
-//            userPreferencesDataStore.savePreferencesDataStoreValues(USER_ID, it.key.toString())
         }
 
 //        val key = userId?.let {
@@ -213,4 +186,3 @@ class UserRepository @Inject constructor(
 }
 
 val imageDownloadUrlProduceResult = Channel<Uri>()
-val currentUserProduceResult = Channel<DvUser>()

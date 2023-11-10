@@ -8,7 +8,8 @@ import androidx.lifecycle.viewModelScope
 import com.davidnardya.dvsocial.events.UserEvents
 import com.davidnardya.dvsocial.model.DvUser
 import com.davidnardya.dvsocial.repositories.UserRepository
-import com.davidnardya.dvsocial.repositories.currentUserProduceResult
+import com.davidnardya.dvsocial.utils.Constants.PASSWORD
+import com.davidnardya.dvsocial.utils.Constants.USER_NAME
 import com.davidnardya.dvsocial.utils.userLoginAuthProduceResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.BufferOverflow
@@ -30,22 +31,12 @@ class LoginViewModel @Inject constructor(private val userRepository: UserReposit
     val currentUser: MutableLiveData<DvUser> = MutableLiveData()
 
     suspend fun setCurrentUser() {
-        currentUser.value = currentUserProduceResult.receive()
+        val username = userRepository.getStringFromPreferenceDataStore(USER_NAME)
+        val password = userRepository.getStringFromPreferenceDataStore(PASSWORD)
+        eventsFlow.tryEmit(UserEvents.OnLogIn(username,password))
         Log.d("123321","currentUser.value.username ${currentUser.value?.username}")
     }
-//    private fun getCurrentUserFlow(): Flow<DvUser> = userRepository.getCurrentUserFlow()
 
-//    fun getCurrentUser(): DvUser? {
-//        getCurrentUserFlow().map {
-//            if (
-//                it.username?.isNotEmpty() == true && it.password?.isNotEmpty() == true &&
-//                it.username != "null" && it.password != "null"
-//            ) {
-//                currentUser.value = it
-//            }
-//        }.launchIn(viewModelScope)
-//        return currentUser.value
-//    }
 
     fun registerUser(userName: String, password: String) {
         eventsFlow.tryEmit(UserEvents.OnNewUserCreated(userName, password))
@@ -58,26 +49,8 @@ class LoginViewModel @Inject constructor(private val userRepository: UserReposit
     }
 
     suspend fun userAttemptLogin(username: String, password: String): Boolean {
-        var result = false
+        var result: Boolean = false
         eventsFlow.tryEmit(UserEvents.OnLogIn(username, password))
-//        viewModelScope.launch {
-//            val user = userRepository.getUserInfo()
-//            if (userLoginAuthProduceResult.receive()) {
-//                result = true
-//                userRepository.saveUserLoggedIn(true)
-//                currentUser.value = user
-//            } else {
-//                if (
-//                    user.username != "" && user.password != "" &&
-//                    user.username == username && user.password == password &&
-//                    !userRepository.getUserLoggedIn()
-//                ) {
-//                    result = true
-//                    userRepository.saveUserLoggedIn(true)
-//                    currentUser.value = user
-//                }
-//            }
-//        }
         result = userLoginAuthProduceResult.receive()
         return result
     }
@@ -88,12 +61,6 @@ class LoginViewModel @Inject constructor(private val userRepository: UserReposit
         viewModelScope.launch {
             userRepository.eventsFlow = eventsFlow
             userRepository.subscribeToCurrentUserFlow()
-        }
-    }
-
-    fun subscribeToUserEventsFlow() {
-        viewModelScope.launch {
-
         }
     }
 
