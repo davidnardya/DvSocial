@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.davidnardya.dvsocial.events.UserEvents
 import com.davidnardya.dvsocial.model.DvUser
+import com.davidnardya.dvsocial.repositories.UserLoginListener
 import com.davidnardya.dvsocial.repositories.UserRepository
 import com.davidnardya.dvsocial.utils.Constants.PASSWORD
 import com.davidnardya.dvsocial.utils.Constants.USER_NAME
@@ -19,7 +20,11 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @Inject constructor(private val userRepository: UserRepository) : ViewModel() {
+class LoginViewModel @Inject constructor(private val userRepository: UserRepository) : ViewModel(), UserLoginListener {
+
+    override fun onUserLogin(user: DvUser) {
+        currentUser.value = user
+    }
 
     fun getEventsFlow(): Flow<UserEvents> = eventsFlow
     private val eventsFlow = MutableSharedFlow<UserEvents>(

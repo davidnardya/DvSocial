@@ -15,15 +15,11 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.davidnardya.dvsocial.events.UserEvents
-import com.davidnardya.dvsocial.model.DvUser
 import com.davidnardya.dvsocial.navigation.SetupNavGraph
 import com.davidnardya.dvsocial.navigation.screens.Screen
+import com.davidnardya.dvsocial.repositories.UserRepository
 import com.davidnardya.dvsocial.utils.UserAuthenticator
 import com.davidnardya.dvsocial.viewmodel.LoginViewModel
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -34,6 +30,9 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var loginViewModel: LoginViewModel
+
+    @Inject
+    lateinit var userRepository: UserRepository
 
     @Inject
     lateinit var userAuthenticator: UserAuthenticator
@@ -65,6 +64,13 @@ class MainActivity : ComponentActivity() {
                     loginViewModel = loginViewModel
                 )
             }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if(::userRepository.isInitialized && ::loginViewModel.isInitialized) {
+            userRepository.initUserLoginListener(loginViewModel)
         }
     }
 

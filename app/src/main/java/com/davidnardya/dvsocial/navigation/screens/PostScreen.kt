@@ -1,9 +1,8 @@
 package com.davidnardya.dvsocial.navigation.screens
 
 import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -81,6 +80,7 @@ fun PostScreen(
                         loginViewModel.getImageDownloadUrl(path)
                         delay(3000)
                         imageDownloadUrlProduceResult.tryReceive().getOrNull()?.let {
+                            Log.d("123321","imageDownloadUrlProduceResult")
                             feedViewModel.uploadNewUserPost(
                                 UserPost(
                                     it.toString(),

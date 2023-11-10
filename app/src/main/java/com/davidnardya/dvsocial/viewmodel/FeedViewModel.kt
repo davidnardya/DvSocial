@@ -1,5 +1,6 @@
 package com.davidnardya.dvsocial.viewmodel
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -63,6 +64,7 @@ class FeedViewModel @Inject constructor(private val userRepository: UserReposito
 
     fun uploadNewUserPost(newPost: UserPost, id: String?, user: DvUser?) {
         viewModelScope.launch {
+            Log.d("123321","uploadNewUserPost viewmodel")
             userRepository.uploadNewUserPost(newPost, id, user)
         }
     }

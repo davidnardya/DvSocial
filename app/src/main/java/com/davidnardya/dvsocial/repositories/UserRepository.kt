@@ -37,6 +37,8 @@ class UserRepository @Inject constructor(
     private val dBRef: DatabaseReference = FirebaseDatabase.getInstance().reference
     private val imageDBRef = FirebaseStorage.getInstance()
 
+    private var userLoginListener: UserLoginListener? = null
+
     var eventsFlow: MutableSharedFlow<UserEvents>? = null
 
     private val userList = MutableStateFlow(mutableListOf<DvUser>())
@@ -77,7 +79,6 @@ class UserRepository @Inject constructor(
     }
 
     suspend fun registerNewUser(username: String, password: String) {
-
         if (username != "" && password != "") {
             val database = Firebase.database
             val myRef = database.getReference("userList")
@@ -118,7 +119,13 @@ class UserRepository @Inject constructor(
     }
 
     suspend fun getIsUserLoggedIn(): Boolean {
-        return userPreferencesDataStore.getPreferencesDataStoreValues(DID_LOG_IN, false) == true
+        return userPreferencesDataStore.getPreferencesDataStoreValues(DID_LOG_IN, false) == true &&
+                userPreferencesDataStore.getPreferencesDataStoreValues(USER_NAME, "") != "" &&
+                userPreferencesDataStore.getPreferencesDataStoreValues(USER_NAME, "") != "null" &&
+                userPreferencesDataStore.getPreferencesDataStoreValues(PASSWORD, "") != "" &&
+                userPreferencesDataStore.getPreferencesDataStoreValues(PASSWORD, "") != "null"
+
+
     }
 
     fun uploadImage(uri: Uri): String {
@@ -130,7 +137,6 @@ class UserRepository @Inject constructor(
     }
 
     fun getImageDownloadUrl(path: String, coroutineScope: CoroutineScope) {
-
         imageDBRef.getReference(path).downloadUrl.addOnSuccessListener {
             coroutineScope.launch {
                 imageDownloadUrlProduceResult.send(it)
@@ -141,6 +147,7 @@ class UserRepository @Inject constructor(
     }
 
     suspend fun uploadNewUserPost(newPost: UserPost, userId: String?, user: DvUser?) {
+        Log.d("123321","uploadNewUserPost repo username: ${newPost.username}")
         //TODO: Need to find a way to update child instead of deletion and re-uploading
         if (userId == "null" || userId == null) {
             return
@@ -165,6 +172,9 @@ class UserRepository @Inject constructor(
                 newUser
             )
             saveLoggedInUser(newUser)
+            if(userLoginListener != null) {
+                userLoginListener?.onUserLogin(newUser)
+            }
         }
 
 //        val key = userId?.let {
@@ -183,6 +193,16 @@ class UserRepository @Inject constructor(
 //        myRef.updateChildren(childUpdate)
 
     }
+
+    fun initUserLoginListener(userLoginListener: UserLoginListener) {
+        if(this.userLoginListener == null) {
+            this.userLoginListener = userLoginListener
+        }
+    }
 }
 
 val imageDownloadUrlProduceResult = Channel<Uri>()
+
+interface UserLoginListener {
+    fun onUserLogin(user: DvUser)
+}
