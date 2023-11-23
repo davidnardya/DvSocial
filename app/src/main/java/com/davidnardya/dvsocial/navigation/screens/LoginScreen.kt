@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.navigation.NavHostController
 import com.davidnardya.dvsocial.utils.showToast
+import com.davidnardya.dvsocial.utils.userLoginAuthProduceResult
 import com.davidnardya.dvsocial.viewmodel.LoginViewModel
 import kotlinx.coroutines.launch
 
@@ -62,7 +63,8 @@ fun LoginScreen(navHostController: NavHostController, viewModel: LoginViewModel)
             Button(
                 onClick = {
                     scope.launch {
-                        if (viewModel.userAttemptLogin(userName, password)) {
+                        viewModel.userAttemptLogin(userName, password)
+                        if (userLoginAuthProduceResult.receive()) {
                             navHostController.navigate(route = Screen.Splash.route) {
                                 popUpTo(Screen.Login.route) {
                                     inclusive = true

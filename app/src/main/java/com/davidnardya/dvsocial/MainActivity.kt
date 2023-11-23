@@ -67,13 +67,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        if(::userRepository.isInitialized && ::loginViewModel.isInitialized) {
-            userRepository.initUserLoginListener(loginViewModel)
-        }
-    }
-
     private fun initObservers() {
         loginViewModel.currentUser.observe(this) {
             if (

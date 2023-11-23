@@ -6,6 +6,7 @@ import com.davidnardya.dvsocial.api.UserApi
 import com.davidnardya.dvsocial.events.UserEvents
 import com.davidnardya.dvsocial.model.DvUser
 import com.davidnardya.dvsocial.model.UserPost
+import com.davidnardya.dvsocial.utils.Constants
 import com.davidnardya.dvsocial.utils.Constants.DID_LOG_IN
 import com.davidnardya.dvsocial.utils.Constants.PASSWORD
 import com.davidnardya.dvsocial.utils.Constants.USER_ID
@@ -37,7 +38,6 @@ class UserRepository @Inject constructor(
     private val dBRef: DatabaseReference = FirebaseDatabase.getInstance().reference
     private val imageDBRef = FirebaseStorage.getInstance()
 
-    private var userLoginListener: UserLoginListener? = null
 
     var eventsFlow: MutableSharedFlow<UserEvents>? = null
 
@@ -72,10 +72,12 @@ class UserRepository @Inject constructor(
     }
 
     suspend fun saveLoggedInUser(user: DvUser) {
+        Log.d("123321","saveLoggedInUser username ${user.username}")
         user.username?.let { userPreferencesDataStore.savePreferencesDataStoreValues(USER_NAME, it) }
         user.password?.let { userPreferencesDataStore.savePreferencesDataStoreValues(PASSWORD, it) }
         user.id?.let { userPreferencesDataStore.savePreferencesDataStoreValues(USER_ID, it) }
         saveIsUserLoggedIn(true)
+        Constants.currentUser = user
     }
 
     suspend fun registerNewUser(username: String, password: String) {
@@ -147,7 +149,8 @@ class UserRepository @Inject constructor(
     }
 
     suspend fun uploadNewUserPost(newPost: UserPost, userId: String?, user: DvUser?) {
-        Log.d("123321","uploadNewUserPost repo username: ${newPost.username}")
+        Log.d("123321","uploadNewUserPost repo newPost username: ${newPost.username}")
+        Log.d("123321","uploadNewUserPost repo user username: ${user?.username}")
         //TODO: Need to find a way to update child instead of deletion and re-uploading
         if (userId == "null" || userId == null) {
             return
@@ -172,9 +175,6 @@ class UserRepository @Inject constructor(
                 newUser
             )
             saveLoggedInUser(newUser)
-            if(userLoginListener != null) {
-                userLoginListener?.onUserLogin(newUser)
-            }
         }
 
 //        val key = userId?.let {
@@ -193,16 +193,6 @@ class UserRepository @Inject constructor(
 //        myRef.updateChildren(childUpdate)
 
     }
-
-    fun initUserLoginListener(userLoginListener: UserLoginListener) {
-        if(this.userLoginListener == null) {
-            this.userLoginListener = userLoginListener
-        }
-    }
 }
 
 val imageDownloadUrlProduceResult = Channel<Uri>()
-
-interface UserLoginListener {
-    fun onUserLogin(user: DvUser)
-}

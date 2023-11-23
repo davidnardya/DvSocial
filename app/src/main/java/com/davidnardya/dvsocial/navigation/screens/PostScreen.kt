@@ -88,10 +88,10 @@ fun PostScreen(
                                     Constants.commentsListOne,
                                     false,
                                     0,
-                                    currentUser?.username
+                                    Constants.currentUser?.username
                                 ),
-                                currentUser?.id,
-                                loginViewModel.currentUser.value
+                                Constants.currentUser?.id,
+                                Constants.currentUser
                             )
                         }
                         delay(3000)

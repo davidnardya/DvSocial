@@ -54,7 +54,7 @@ class FeedViewModel @Inject constructor(private val userRepository: UserReposito
             userRepository.subscribeToCurrentUserFlow()
             while (i) {
                 delay(1000L)
-                if (getFeedPostList().isNotEmpty() && userRepository.getIsUserLoggedIn()) {
+                if (getFeedPostList().isNotEmpty() && userRepository.getIsUserLoggedIn() && Constants.currentUser != null) {
                     i = false
                     isLoadingComplete.value = true
                 }

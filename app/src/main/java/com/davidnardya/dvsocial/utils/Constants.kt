@@ -11,6 +11,8 @@ import com.davidnardya.dvsocial.navigation.navdrawer.MenuItem
 
 object Constants {
 
+    var currentUser: DvUser? = null
+
     val userNameList = listOf(
         "MyNameIsPaul",
         "ThisIsAUserName",
