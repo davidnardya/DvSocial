@@ -1,6 +1,5 @@
 package com.davidnardya.dvsocial.viewmodel
 
-import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -21,23 +20,25 @@ class FeedViewModel @Inject constructor(private val userRepository: UserReposito
 
     val isLoadingComplete: MutableLiveData<Boolean> = MutableLiveData(false)
     val currentPostState = mutableStateOf(UserPost(comments = Constants.commentsListOne))
+    val postList: MutableLiveData<MutableList<UserPost>> = MutableLiveData()
 
     private fun getUsersFlow(): MutableStateFlow<MutableList<DvUser>> =
         userRepository.getUserListFlow()
 
 
 
-    fun getFeedPostList(): MutableList<UserPost> {
-        val postList = mutableListOf<UserPost>()
+    fun getFeedPostList() {
+        val newPostList = mutableListOf<UserPost>()
         getUsersFlow().onEach { userList ->
             userList.forEach { user ->
                 user.posts?.forEach {
                     it.username = user.username
-                    postList.add(it)
+                    newPostList.add(it)
                 }
             }
         }.launchIn(viewModelScope)
-        return postList
+        postList.value = newPostList
+//        return newPostList
     }
 
 
@@ -54,7 +55,7 @@ class FeedViewModel @Inject constructor(private val userRepository: UserReposito
             userRepository.subscribeToCurrentUserFlow()
             while (i) {
                 delay(1000L)
-                if (getFeedPostList().isNotEmpty() && userRepository.getIsUserLoggedIn() && Constants.currentUser != null) {
+                if (postList.value?.isNotEmpty() == true && userRepository.getIsUserLoggedIn() && Constants.currentUser != null) {
                     i = false
                     isLoadingComplete.value = true
                 }

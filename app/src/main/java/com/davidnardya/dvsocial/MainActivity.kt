@@ -51,17 +51,20 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             navController = rememberNavController()
-            val posts = remember { mutableStateListOf(feedViewModel.getFeedPostList()) }.first()
+            feedViewModel.getFeedPostList()
+            val posts = remember { mutableStateListOf(feedViewModel.postList.value) }.first()
 
             CompositionLocalProvider(
                 LocalLayoutDirection provides LayoutDirection.Ltr
             ) {
-                SetupNavGraph(
-                    navHostController = navController,
-                    feedPostList = posts,
-                    feedViewModel = feedViewModel,
-                    loginViewModel = loginViewModel
-                )
+                if (posts != null) {
+                    SetupNavGraph(
+                        navHostController = navController,
+                        feedPostList = posts,
+                        feedViewModel = feedViewModel,
+                        loginViewModel = loginViewModel
+                    )
+                }
             }
         }
     }
