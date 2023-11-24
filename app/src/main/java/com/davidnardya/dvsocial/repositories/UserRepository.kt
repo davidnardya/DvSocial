@@ -72,7 +72,6 @@ class UserRepository @Inject constructor(
     }
 
     suspend fun saveLoggedInUser(user: DvUser) {
-        Log.d("123321","saveLoggedInUser username ${user.username}")
         user.username?.let { userPreferencesDataStore.savePreferencesDataStoreValues(USER_NAME, it) }
         user.password?.let { userPreferencesDataStore.savePreferencesDataStoreValues(PASSWORD, it) }
         user.id?.let { userPreferencesDataStore.savePreferencesDataStoreValues(USER_ID, it) }
@@ -149,8 +148,6 @@ class UserRepository @Inject constructor(
     }
 
     suspend fun uploadNewUserPost(newPost: UserPost, userId: String?, user: DvUser?) {
-        Log.d("123321","uploadNewUserPost repo newPost username: ${newPost.username}")
-        Log.d("123321","uploadNewUserPost repo user username: ${user?.username}")
         //TODO: Need to find a way to update child instead of deletion and re-uploading
         if (userId == "null" || userId == null) {
             return

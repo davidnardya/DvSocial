@@ -27,7 +27,7 @@ class LoginViewModel @Inject constructor(private val userRepository: UserReposit
         extraBufferCapacity = 1
     )
 
-    val currentUser: MutableLiveData<DvUser?> = MutableLiveData(Constants.currentUser)
+//    val currentUser: MutableLiveData<DvUser?> = MutableLiveData(Constants.currentUser)
 
     suspend fun setCurrentUser() {
         val username = userRepository.getStringFromPreferenceDataStore(USER_NAME)

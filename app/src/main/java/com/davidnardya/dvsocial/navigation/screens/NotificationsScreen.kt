@@ -16,13 +16,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.davidnardya.dvsocial.utils.Constants
 import com.davidnardya.dvsocial.utils.showToast
 import com.davidnardya.dvsocial.viewmodel.FeedViewModel
 import com.davidnardya.dvsocial.viewmodel.LoginViewModel
 
 @Composable
 fun NotificationsScreen(loginViewModel: LoginViewModel, navHostController: NavHostController) {
-    val notifications = loginViewModel.currentUser.value?.notifications ?: emptyList()
+    val notifications = Constants.currentUser?.notifications ?: emptyList()
     LazyColumn {
         items(notifications) { notification ->
             Column (

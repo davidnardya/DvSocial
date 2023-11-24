@@ -64,7 +64,6 @@ class FeedViewModel @Inject constructor(private val userRepository: UserReposito
 
     fun uploadNewUserPost(newPost: UserPost, id: String?, user: DvUser?) {
         viewModelScope.launch {
-            Log.d("123321","uploadNewUserPost viewmodel")
             userRepository.uploadNewUserPost(newPost, id, user)
         }
     }

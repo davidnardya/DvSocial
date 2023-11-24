@@ -20,12 +20,13 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.davidnardya.dvsocial.utils.Constants
 import com.davidnardya.dvsocial.viewmodel.FeedViewModel
 import com.davidnardya.dvsocial.viewmodel.LoginViewModel
 
 @Composable
 fun UserProfileScreen(feedViewModel: FeedViewModel, loginViewModel: LoginViewModel, navController: NavHostController) {
-    val user = loginViewModel.currentUser.value
+    val user = Constants.currentUser
 
     user?.posts?.let { posts ->
         if (posts.isEmpty()) {

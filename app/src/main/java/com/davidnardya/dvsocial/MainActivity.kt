@@ -1,7 +1,6 @@
 package com.davidnardya.dvsocial
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.CompositionLocalProvider
@@ -68,27 +67,6 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun initObservers() {
-        loginViewModel.currentUser.observe(this) {
-            if (
-                it != null &&
-                it.username?.isNotEmpty() == true && it.password?.isNotEmpty() == true &&
-                it.username != "null" && it.password != "null"
-            ) {
-                Log.d("123321","it.username ${it.username}")
-                lifecycleScope.launch {
-                    if(loginViewModel.getUserLoggedIn()) {
-                        navController.navigate(route = Screen.Splash.route) {
-                            popUpTo(Screen.Login.route) {
-                                inclusive = true
-                            }
-                            popUpTo(Screen.Splash.route) {
-                                inclusive = true
-                            }
-                        }
-                    }
-                }
-            }
-        }
 
         feedViewModel.isLoadingComplete.observe(this) {
             if (it) {

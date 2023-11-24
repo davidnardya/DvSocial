@@ -1,7 +1,6 @@
 package com.davidnardya.dvsocial.navigation.screens
 
 import android.net.Uri
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -42,9 +41,6 @@ fun PostScreen(
     loginViewModel: LoginViewModel,
     uri: Uri?
 ) {
-    val currentUser by remember {
-        mutableStateOf(loginViewModel.currentUser.value)
-    }
     val scope = rememberCoroutineScope()
     var postText by rememberSaveable { mutableStateOf("") }
     var buttonHeight by rememberSaveable { mutableStateOf(0) }
@@ -80,7 +76,7 @@ fun PostScreen(
                         loginViewModel.getImageDownloadUrl(path)
                         delay(3000)
                         imageDownloadUrlProduceResult.tryReceive().getOrNull()?.let {
-                            Log.d("123321","imageDownloadUrlProduceResult")
+                            val user = Constants.currentUser
                             feedViewModel.uploadNewUserPost(
                                 UserPost(
                                     it.toString(),
@@ -88,10 +84,10 @@ fun PostScreen(
                                     Constants.commentsListOne,
                                     false,
                                     0,
-                                    Constants.currentUser?.username
+                                    user?.username
                                 ),
-                                Constants.currentUser?.id,
-                                Constants.currentUser
+                                user?.id,
+                                user
                             )
                         }
                         delay(3000)
