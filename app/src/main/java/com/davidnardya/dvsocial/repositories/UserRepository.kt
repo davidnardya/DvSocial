@@ -37,6 +37,7 @@ class UserRepository @Inject constructor(
 ) {
     private val dBRef: DatabaseReference = FirebaseDatabase.getInstance().reference
     private val imageDBRef = FirebaseStorage.getInstance()
+    private val userDBRef = Firebase.database.getReference("userList")
 
 
     var eventsFlow: MutableSharedFlow<UserEvents>? = null
@@ -81,10 +82,7 @@ class UserRepository @Inject constructor(
 
     suspend fun registerNewUser(username: String, password: String) {
         if (username != "" && password != "") {
-            val database = Firebase.database
-            val myRef = database.getReference("userList")
-
-            myRef.push().let {
+            userDBRef.push().let {
                 it.setValue(
                     DvUser(it.key, username, password)
                 )
@@ -101,6 +99,7 @@ class UserRepository @Inject constructor(
         userPreferencesDataStore.savePreferencesDataStoreValues(USER_ID, "")
         saveIsUserLoggedIn(false)
         clearDataStore()
+        Constants.currentUser = null
     }
 
     private suspend fun clearDataStore() {
@@ -125,8 +124,6 @@ class UserRepository @Inject constructor(
                 userPreferencesDataStore.getPreferencesDataStoreValues(USER_NAME, "") != "null" &&
                 userPreferencesDataStore.getPreferencesDataStoreValues(PASSWORD, "") != "" &&
                 userPreferencesDataStore.getPreferencesDataStoreValues(PASSWORD, "") != "null"
-
-
     }
 
     fun uploadImage(uri: Uri): String {
@@ -152,15 +149,13 @@ class UserRepository @Inject constructor(
         if (userId == "null" || userId == null) {
             return
         }
-        val database = Firebase.database
-        val myRef = database.getReference("userList")
 
         val posts = user?.posts?.toMutableList()
         posts?.add(newPost)
 
-        myRef.child(userId).removeValue()
+        userDBRef.child(userId).removeValue()
 
-        myRef.push().let {
+        userDBRef.push().let {
             val newUser = DvUser(
                 it.key,
                 user?.username,

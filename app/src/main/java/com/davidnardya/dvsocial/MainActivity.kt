@@ -19,6 +19,7 @@ import com.davidnardya.dvsocial.navigation.screens.Screen
 import com.davidnardya.dvsocial.repositories.UserRepository
 import com.davidnardya.dvsocial.utils.UserAuthenticator
 import com.davidnardya.dvsocial.viewmodel.LoginViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -43,7 +44,8 @@ class MainActivity : ComponentActivity() {
         initActivity()
         initObservers()
 
-        lifecycleScope.launch {
+
+        lifecycleScope.launch(Dispatchers.IO) {
             loginViewModel.getEventsFlow().collect {
                 userAuthenticator.handleUserEvent(it)
             }
