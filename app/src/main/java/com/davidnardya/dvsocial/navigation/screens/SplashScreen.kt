@@ -32,7 +32,7 @@ fun SplashScreen(
         var i = true
 
         while (i && count < 5) {
-            delay(1000)
+            delay(2000)
             if (loginViewModel?.getUserLoggedIn() == true) {
                 i = false
             }

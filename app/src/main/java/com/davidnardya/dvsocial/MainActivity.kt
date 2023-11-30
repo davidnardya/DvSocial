@@ -1,6 +1,7 @@
 package com.davidnardya.dvsocial
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.CompositionLocalProvider
@@ -20,6 +21,7 @@ import com.davidnardya.dvsocial.repositories.UserRepository
 import com.davidnardya.dvsocial.utils.UserAuthenticator
 import com.davidnardya.dvsocial.viewmodel.LoginViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -45,8 +47,13 @@ class MainActivity : ComponentActivity() {
         initObservers()
 
 
-        lifecycleScope.launch(Dispatchers.IO) {
-            loginViewModel.getEventsFlow().collect {
+        lifecycleScope.launch(Dispatchers.Main) {
+            //TODO: Temp solve for user registration issue, need to try and understand if there's a better way than collectLatest()
+//            loginViewModel.getEventsFlow().collect {
+//                userAuthenticator.handleUserEvent(it)
+//            }
+            loginViewModel.getEventsFlow().collectLatest {
+                Log.d("123321","event $it")
                 userAuthenticator.handleUserEvent(it)
             }
         }

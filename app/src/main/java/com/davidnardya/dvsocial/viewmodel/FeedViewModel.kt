@@ -52,7 +52,7 @@ class FeedViewModel @Inject constructor(private val userRepository: UserReposito
     fun checkFeedPostList() {
         viewModelScope.launch {
             var i = true
-            userRepository.subscribeToCurrentUserFlow()
+//            userRepository.subscribeToCurrentUserFlow()
             while (i) {
                 delay(1000L)
                 if (postList.value?.isNotEmpty() == true && userRepository.getIsUserLoggedIn() && Constants.currentUser != null) {
