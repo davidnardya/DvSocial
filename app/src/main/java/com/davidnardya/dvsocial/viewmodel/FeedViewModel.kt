@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.davidnardya.dvsocial.model.DvUser
+import com.davidnardya.dvsocial.model.UserComment
 import com.davidnardya.dvsocial.model.UserPost
 import com.davidnardya.dvsocial.repositories.UserRepository
 import com.davidnardya.dvsocial.utils.Constants
@@ -63,10 +64,14 @@ class FeedViewModel @Inject constructor(private val userRepository: UserReposito
         }
     }
 
+    fun generateNewId() = userRepository.generateNewId()
+
+    fun uploadNewUserComment(newComment: UserComment, userId: String?, postId: String?) {
+        userRepository.uploadNewUserComment(newComment, userId, postId)
+    }
+
     fun uploadNewUserPost(newPost: UserPost, id: String?) {
-        viewModelScope.launch {
-            userRepository.uploadNewUserPost(newPost, id)
-        }
+        userRepository.uploadNewUserPost(newPost, id)
     }
 
 }

@@ -64,19 +64,31 @@ fun CommentScreen(feedViewModel: FeedViewModel, navHostController: NavHostContro
             onClick = {
                 scope.launch {
                     val currentPost = feedViewModel.currentPostState.value
-                    val newList = currentPost.comments?.toMutableList()
-                    newList?.add(
-                        UserComment(commentText.cleanSpaces(),false,0,currentPost.username)
+
+                    feedViewModel.uploadNewUserComment(
+                        UserComment(
+                            commentText.cleanSpaces(),
+                            false,
+                            0,
+                            currentPost.username
+                        ),
+                        Constants.currentUser?.id,
+                        currentPost.id
                     )
-                    val newPost = UserPost(
-                        imageUrl = currentPost.imageUrl,
-                        caption = currentPost.caption,
-                        comments = newList,
-                        isLiked = currentPost.isLiked,
-                        likes = currentPost.likes
-                    )
-                    feedViewModel.currentPostState.value = newPost
-                    feedViewModel.uploadNewUserPost(newPost,Constants.currentUser?.id)
+
+//                    val newList = currentPost.comments?.toMutableList()
+//                    newList?.add(
+//                        UserComment(commentText.cleanSpaces(),false,0,currentPost.username)
+//                    )
+//                    val newPost = UserPost(
+//                        imageUrl = currentPost.imageUrl,
+//                        caption = currentPost.caption,
+//                        comments = newList,
+//                        isLiked = currentPost.isLiked,
+//                        likes = currentPost.likes
+//                    )
+//                    feedViewModel.currentPostState.value = newPost
+//                    feedViewModel.uploadNewUserPost(newPost,Constants.currentUser?.id)
                     feedViewModel.getFeedPostList()
                     showSpinner = true
                     delay(3000)

@@ -5,6 +5,7 @@ import android.util.Log
 import com.davidnardya.dvsocial.api.UserApi
 import com.davidnardya.dvsocial.events.UserEvents
 import com.davidnardya.dvsocial.model.DvUser
+import com.davidnardya.dvsocial.model.UserComment
 import com.davidnardya.dvsocial.model.UserPost
 import com.davidnardya.dvsocial.utils.Constants
 import com.davidnardya.dvsocial.utils.Constants.DID_LOG_IN
@@ -38,6 +39,7 @@ class UserRepository @Inject constructor(
     private val dBRef: DatabaseReference = FirebaseDatabase.getInstance().reference
     private val imageDBRef = FirebaseStorage.getInstance()
     private val userDBRef = Firebase.database.getReference("userList")
+    private val idDBRef = Firebase.database.getReference("idList")
 
 
     var eventsFlow: MutableSharedFlow<UserEvents>? = null
@@ -50,9 +52,11 @@ class UserRepository @Inject constructor(
             override fun onDataChange(snapshot: DataSnapshot) {
                 val list = mutableListOf<DvUser>()
                 snapshot.children.forEach { users ->
-                    users.children.forEach { user ->
-                        user.getValue<DvUser>()?.let {
-                            list.add(it)
+                    if(users.key == "userList") {
+                        users.children.forEach { user ->
+                            user.getValue<DvUser>()?.let {
+                                list.add(it)
+                            }
                         }
                     }
                 }
@@ -147,6 +151,58 @@ class UserRepository @Inject constructor(
         }.addOnFailureListener {
             Log.e("${this::class.java.simpleName} getImageDownloadUrl", "error: ${it.message}")
         }
+    }
+
+    fun generateNewId(): String? {
+        val key = idDBRef.push().key
+        key?.let {
+            idDBRef.child(key).setValue(key)
+        }
+        return key
+    }
+
+    fun uploadNewUserComment(newComment: UserComment, userId: String?, postId: String?) {
+        if (userId == "null" || userId == null || postId == "null" || postId == null) {
+            return
+        }
+        val comments = userDBRef
+            .child(userId)
+            .child("posts")
+            .child(postId)
+            .child("comments")
+
+        comments.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val updateMap = HashMap<String, Any>()
+
+                val list = ArrayList<UserComment>()
+                if (dataSnapshot.exists()) {
+                    // The "posts" list already exists, insert the new item
+                    dataSnapshot.children.forEach { existingComment ->
+                        existingComment.getValue<UserComment>()?.let {
+                            list.add(it)
+                        }
+                    }
+                    list.add(newComment)
+                } else {
+                    // The "posts" list doesn't exist, create it and insert the new item
+                    list.add(newComment)
+                }
+                updateMap["comments"] = list
+
+                // Use updateChildren to update the specific value within the object
+                userDBRef
+                    .child(userId)
+                    .child("posts")
+                    .child(postId)
+                    .updateChildren(updateMap)
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Handle the error
+                Log.e("${this::class.java.simpleName} uploadNewUserComment", databaseError.message)
+            }
+        })
     }
 
     fun uploadNewUserPost(newPost: UserPost, userId: String?) {

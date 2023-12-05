@@ -79,9 +79,10 @@ fun PostScreen(
                             val user = Constants.currentUser
                             feedViewModel.uploadNewUserPost(
                                 UserPost(
+                                    feedViewModel.generateNewId(),
                                     it.toString(),
                                     postText,
-                                    Constants.commentsListOne,
+                                    null,
                                     false,
                                     0,
                                     user?.username

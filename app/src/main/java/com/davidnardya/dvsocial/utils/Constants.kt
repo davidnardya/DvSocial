@@ -176,62 +176,69 @@ object Constants {
         )
     )
 
-    val mockPosts = listOf(
-        UserPost(
-            "https://images.dog.ceo/breeds/mountain-bernese/n02107683_4515.jpg",
-            "This is a test caption20",
-            commentsListOne,
-            false,
-            2,
-            ""
-        ),
-        UserPost(
-            "https://images.dog.ceo/breeds/stbernard/n02109525_1100.jpg",
-            "This is a test caption10",
-            commentsListTwo,
-            false,
-            0,
-            ""
-        ),
-        UserPost(
-            "https://images.dog.ceo/breeds/basenji/n02110806_6424.jpg",
-            "This is a test caption10",
-            commentsListThree,
-            false,
-            0,
-            ""
-        ),
-        UserPost(
-            "https://images.dog.ceo/breeds/eskimo/n02109961_7861.jpg",
-            "This is a test caption10",
-            commentsListOne,
-            false,
-            0,
-            ""
-        ),
-        UserPost(
-            "https://images.dog.ceo/breeds/terrier-norwich/n02094258_2801.jpg",
-            "This is a test caption10",
-            commentsListOne,
-            false,
-            0,
-            ""
-        ),
-        UserPost(
-            "https://images.dog.ceo/breeds/doberman/n02107142_5663.jpg",
-            "This is a test caption10",
-            commentsListOne,
-            false,
-            0,
-            ""
-        ),
-        UserPost(
-            "https://images.dog.ceo/breeds/terrier-irish/n02093991_1397.jpg",
-            "This is a test caption10",
-            commentsListOne,
-            false,
-            0,
-            ""
-        )
-    )
+//    val mockPosts = listOf(
+//        UserPost(
+//            "001",
+//            "https://images.dog.ceo/breeds/mountain-bernese/n02107683_4515.jpg",
+//            "This is a test caption20",
+//            commentsListOne,
+//            false,
+//            2,
+//            ""
+//        ),
+//        UserPost(
+//            "002",
+//            "https://images.dog.ceo/breeds/stbernard/n02109525_1100.jpg",
+//            "This is a test caption10",
+//            commentsListTwo,
+//            false,
+//            0,
+//            ""
+//        ),
+//        UserPost(
+//            "003",
+//            "https://images.dog.ceo/breeds/basenji/n02110806_6424.jpg",
+//            "This is a test caption10",
+//            commentsListThree,
+//            false,
+//            0,
+//            ""
+//        ),
+//        UserPost(
+//            "004",
+//            "https://images.dog.ceo/breeds/eskimo/n02109961_7861.jpg",
+//            "This is a test caption10",
+//            commentsListOne,
+//            false,
+//            0,
+//            ""
+//        ),
+//        UserPost(
+//            "005",
+//            "https://images.dog.ceo/breeds/terrier-norwich/n02094258_2801.jpg",
+//            "This is a test caption10",
+//            commentsListOne,
+//            false,
+//            0,
+//            ""
+//        ),
+//        UserPost(
+//            "006",
+//            "https://images.dog.ceo/breeds/doberman/n02107142_5663.jpg",
+//            "This is a test caption10",
+//            commentsListOne,
+//            false,
+//            0,
+//            ""
+//        ),
+//        UserPost(
+//            "007",
+//            "https://images.dog.ceo/breeds/terrier-irish/n02093991_1397.jpg",
+//            "This is a test caption10",
+//            commentsListOne,
+//            false,
+//            0,
+//            ""
+//        )
+//    )
 }
