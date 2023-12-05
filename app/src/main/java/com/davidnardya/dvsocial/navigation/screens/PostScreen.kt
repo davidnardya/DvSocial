@@ -86,8 +86,7 @@ fun PostScreen(
                                     0,
                                     user?.username
                                 ),
-                                user?.id,
-                                user
+                                user?.id
                             )
                         }
                         delay(3000)

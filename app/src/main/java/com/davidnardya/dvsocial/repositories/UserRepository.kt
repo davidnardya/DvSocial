@@ -60,7 +60,7 @@ class UserRepository @Inject constructor(
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Log.e("UserRepository ValueEventListener", error.message)
+                Log.e("${this::class.java.simpleName} ValueEventListener", error.message)
             }
         })
 
@@ -69,11 +69,16 @@ class UserRepository @Inject constructor(
     suspend fun subscribeToCurrentUserFlow() {
         val username = getStringFromPreferenceDataStore(USER_NAME)
         val password = getStringFromPreferenceDataStore(PASSWORD)
-        eventsFlow?.tryEmit(UserEvents.OnLogIn(username,password))
+        eventsFlow?.tryEmit(UserEvents.OnLogIn(username, password))
     }
 
     suspend fun saveLoggedInUser(user: DvUser) {
-        user.username?.let { userPreferencesDataStore.savePreferencesDataStoreValues(USER_NAME, it) }
+        user.username?.let {
+            userPreferencesDataStore.savePreferencesDataStoreValues(
+                USER_NAME,
+                it
+            )
+        }
         user.password?.let { userPreferencesDataStore.savePreferencesDataStoreValues(PASSWORD, it) }
         user.id?.let { userPreferencesDataStore.savePreferencesDataStoreValues(USER_ID, it) }
         saveIsUserLoggedIn(true)
@@ -110,7 +115,7 @@ class UserRepository @Inject constructor(
         userPreferencesDataStore.clear()
     }
 
-    suspend fun getStringFromPreferenceDataStore(key: String) : String {
+    suspend fun getStringFromPreferenceDataStore(key: String): String {
         return userPreferencesDataStore.getPreferencesDataStoreValues(key, "").toString()
     }
 
@@ -140,50 +145,46 @@ class UserRepository @Inject constructor(
                 imageDownloadUrlProduceResult.send(it)
             }
         }.addOnFailureListener {
-            Log.e("UserRepository getImageDownloadUrl", "error: ${it.message}")
+            Log.e("${this::class.java.simpleName} getImageDownloadUrl", "error: ${it.message}")
         }
     }
 
-    suspend fun uploadNewUserPost(newPost: UserPost, userId: String?, user: DvUser?) {
-        //TODO: Need to find a way to update child instead of deletion and re-uploading
+    fun uploadNewUserPost(newPost: UserPost, userId: String?) {
         if (userId == "null" || userId == null) {
             return
         }
+        val posts = userDBRef
+            .child(userId)
+            .child("posts")
 
-        val posts = user?.posts?.toMutableList()
-        posts?.add(newPost)
+        posts.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val updateMap = HashMap<String, Any>()
 
-        userDBRef.child(userId).removeValue()
+                val list = ArrayList<UserPost>()
+                if (dataSnapshot.exists()) {
+                    // The "posts" list already exists, insert the new item
+                    dataSnapshot.children.forEach { existingPost ->
+                        existingPost.getValue<UserPost>()?.let {
+                            list.add(it)
+                        }
+                    }
+                    list.add(newPost)
+                } else {
+                    // The "posts" list doesn't exist, create it and insert the new item
+                    list.add(newPost)
+                }
+                updateMap["posts"] = list
 
-        userDBRef.push().let {
-            val newUser = DvUser(
-                it.key,
-                user?.username,
-                user?.password,
-                posts,
-                user?.notifications
-            )
-            it.setValue(
-                newUser
-            )
-            saveLoggedInUser(newUser)
-        }
+                // Use updateChildren to update the specific value within the object
+                userDBRef.child(userId).updateChildren(updateMap)
+            }
 
-//        val key = userId?.let {
-//            myRef
-//                .child(it)
-//                .child("posts").push().key
-//        }
-
-//        val postValues = newPost.toMap()
-//        val childUpdate = hashMapOf<String, Any>(
-//            "/$userId/posts/$key" to postValues
-//        )
-//        val childUpdate = mapOf<String, Any>(
-//            "/$userId/posts/$key" to newPost
-//        )
-//        myRef.updateChildren(childUpdate)
-
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Handle the error
+                Log.e("${this::class.java.simpleName} uploadNewUserPost", databaseError.message)
+            }
+        })
     }
 }
 

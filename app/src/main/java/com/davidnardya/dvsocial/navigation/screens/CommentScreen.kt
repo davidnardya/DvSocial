@@ -76,7 +76,7 @@ fun CommentScreen(feedViewModel: FeedViewModel, navHostController: NavHostContro
                         likes = currentPost.likes
                     )
                     feedViewModel.currentPostState.value = newPost
-                    feedViewModel.uploadNewUserPost(newPost,Constants.currentUser?.id,Constants.currentUser)
+                    feedViewModel.uploadNewUserPost(newPost,Constants.currentUser?.id)
                     feedViewModel.getFeedPostList()
                     showSpinner = true
                     delay(3000)
