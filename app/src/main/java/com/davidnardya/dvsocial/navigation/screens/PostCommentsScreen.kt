@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.davidnardya.dvsocial.model.UserComment
 import com.davidnardya.dvsocial.utils.showLikesText
 import com.davidnardya.dvsocial.viewmodel.FeedViewModel
 
@@ -29,13 +30,13 @@ import com.davidnardya.dvsocial.viewmodel.FeedViewModel
 fun PostCommentsScreen(viewModel: FeedViewModel, navController: NavHostController) {
     val commentsList = viewModel.currentPostState.value.comments
 
-    commentsList?.let { list ->
+    if (commentsList?.size != null && commentsList.isNotEmpty()) {
         LazyColumn(modifier = Modifier.fillMaxWidth()) {
-            itemsIndexed(list) { index, comment ->
+            itemsIndexed(commentsList) { index, comment ->
                 var likes by rememberSaveable {
                     mutableStateOf(comment.likes ?: 0)
                 }
-                if(index == 0) {
+                if (index == 0) {
                     SetHeader(likeable = comment, navController = navController)
                 }
                 Text(
@@ -52,7 +53,7 @@ fun PostCommentsScreen(viewModel: FeedViewModel, navController: NavHostControlle
                 )
                 Row(
                     verticalAlignment = Alignment.CenterVertically
-                ){
+                ) {
                     CreateLikeButton(comment, likes, onLikesChange = { likes = it })
                     Text(
                         text = showLikesText(likes),
@@ -63,17 +64,23 @@ fun PostCommentsScreen(viewModel: FeedViewModel, navController: NavHostControlle
 
             }
         }
-    } ?: run {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxSize()
-        ) {
-            Text(
-                text = "No comments yet!",
-                modifier = Modifier.fillMaxSize(),
-                textAlign = TextAlign.Center
-            )
-        }
+    } else {
+        NoComments(navController)
+    }
+}
+
+@Composable
+private fun NoComments(navController: NavHostController) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier.fillMaxSize()
+    ) {
+        SetHeader(likeable = UserComment(), navController = navController)
+        Text(
+            text = "No comments yet!",
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.Center
+        )
     }
 }

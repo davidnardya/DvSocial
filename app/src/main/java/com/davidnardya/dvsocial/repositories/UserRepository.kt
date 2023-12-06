@@ -52,7 +52,7 @@ class UserRepository @Inject constructor(
             override fun onDataChange(snapshot: DataSnapshot) {
                 val list = mutableListOf<DvUser>()
                 snapshot.children.forEach { users ->
-                    if(users.key == "userList") {
+                    if (users.key == "userList") {
                         users.children.forEach { user ->
                             user.getValue<DvUser>()?.let {
                                 list.add(it)
@@ -165,7 +165,55 @@ class UserRepository @Inject constructor(
         if (userId == "null" || userId == null || postId == "null" || postId == null) {
             return
         }
-        val comments = userDBRef
+
+        val posts = userDBRef
+            .child(userId)
+            .child("posts")
+
+        posts.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val updateMap = HashMap<String, Any>()
+
+                val userPosts = ArrayList<UserPost>()
+                if (dataSnapshot.exists()) {
+                    dataSnapshot.children.forEach { existingPost ->
+                        existingPost.getValue<UserPost>()?.let {
+                            if (it.id == postId) {
+                                val newCommentsList = it.comments?.let { userComments ->
+                                    ArrayList<UserComment>(
+                                        userComments
+                                    )
+                                }
+                                newCommentsList?.add(newComment)
+                                userPosts.add(
+                                    UserPost(
+                                        it.id,
+                                        it.imageUrl,
+                                        it.caption,
+                                        newCommentsList,
+                                        it.isLiked,
+                                        it.likes,
+                                        it.username
+                                    )
+                                )
+                            } else {
+                                userPosts.add(it)
+                            }
+                        }
+                    }
+                }
+                updateMap["posts"] = userPosts
+
+                // Use updateChildren to update the specific value within the object
+                userDBRef.child(userId).updateChildren(updateMap)
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Handle the error
+                Log.e("${this::class.java.simpleName} uploadNewUserPost", databaseError.message)
+            }
+        })
+        /*val comments = userDBRef
             .child(userId)
             .child("posts")
             .child(postId)
@@ -177,7 +225,7 @@ class UserRepository @Inject constructor(
 
                 val list = ArrayList<UserComment>()
                 if (dataSnapshot.exists()) {
-                    // The "posts" list already exists, insert the new item
+                    // The list already exists, insert the new item
                     dataSnapshot.children.forEach { existingComment ->
                         existingComment.getValue<UserComment>()?.let {
                             list.add(it)
@@ -185,7 +233,7 @@ class UserRepository @Inject constructor(
                     }
                     list.add(newComment)
                 } else {
-                    // The "posts" list doesn't exist, create it and insert the new item
+                    // The list doesn't exist, create it and insert the new item
                     list.add(newComment)
                 }
                 updateMap["comments"] = list
@@ -202,7 +250,7 @@ class UserRepository @Inject constructor(
                 // Handle the error
                 Log.e("${this::class.java.simpleName} uploadNewUserComment", databaseError.message)
             }
-        })
+        })*/
     }
 
     fun uploadNewUserPost(newPost: UserPost, userId: String?) {
@@ -219,7 +267,7 @@ class UserRepository @Inject constructor(
 
                 val list = ArrayList<UserPost>()
                 if (dataSnapshot.exists()) {
-                    // The "posts" list already exists, insert the new item
+                    // The list already exists, insert the new item
                     dataSnapshot.children.forEach { existingPost ->
                         existingPost.getValue<UserPost>()?.let {
                             list.add(it)
@@ -227,7 +275,7 @@ class UserRepository @Inject constructor(
                     }
                     list.add(newPost)
                 } else {
-                    // The "posts" list doesn't exist, create it and insert the new item
+                    // The list doesn't exist, create it and insert the new item
                     list.add(newPost)
                 }
                 updateMap["posts"] = list
