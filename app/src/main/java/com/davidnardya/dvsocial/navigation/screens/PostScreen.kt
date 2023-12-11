@@ -14,6 +14,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -43,7 +44,7 @@ fun PostScreen(
 ) {
     val scope = rememberCoroutineScope()
     var postText by rememberSaveable { mutableStateOf("") }
-    var buttonHeight by rememberSaveable { mutableStateOf(0) }
+    var buttonHeight by rememberSaveable { mutableIntStateOf(0) }
     var showSpinner by rememberSaveable { mutableStateOf(false) }
     var selectedImageUri by remember {
         mutableStateOf<Uri?>(null)

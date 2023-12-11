@@ -155,7 +155,12 @@ fun PopulateFeedContent(
                         .padding(6.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    CreateLikeButton(post, likes, onLikesChange = { likes = it })
+                    CreateLikeButton(
+                        post,
+                        likes,
+                        onLikesChange = { likes = it },
+                        feedViewModel = viewModel
+                    )
                     IconButton(
                         onClick = {
                             navController.navigate(route = Screen.PostComments.route)
@@ -188,7 +193,12 @@ fun PopulateFeedContent(
 }
 
 @Composable
-fun CreateLikeButton(likeable: Likeable, likes: Int, onLikesChange: (Int) -> Unit) {
+fun CreateLikeButton(
+    likeable: Likeable,
+    likes: Int,
+    onLikesChange: (Int) -> Unit,
+    feedViewModel: FeedViewModel
+) {
     var icon by rememberSaveable {
         mutableStateOf(likeable.isLiked())
     }
@@ -197,8 +207,14 @@ fun CreateLikeButton(likeable: Likeable, likes: Int, onLikesChange: (Int) -> Uni
             icon = !icon
             if (likeable.isLiked()) {
                 onLikesChange(likes.plus(1))
+                if (likeable is UserPost) {
+                    feedViewModel.updatePostLikes(likeable.id, Constants.currentUser?.id)
+                }
             } else {
                 onLikesChange(likes.minus(1))
+                if (likeable is UserPost) {
+                    feedViewModel.updatePostLikes(likeable.id, Constants.currentUser?.id)
+                }
             }
         }
     ) {

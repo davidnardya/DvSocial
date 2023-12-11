@@ -161,6 +161,58 @@ class UserRepository @Inject constructor(
         return key
     }
 
+    fun updatePostLikes(postId: String?, userId: String?) {
+        if (postId == "null" || postId == null || userId == "null" || userId == null) {
+            return
+        }
+        val posts = userDBRef
+            .child(userId)
+            .child("posts")
+
+        posts.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val updateMap = HashMap<String, Any>()
+
+                val list = ArrayList<UserPost>()
+                // The list already exists, insert the new item
+                dataSnapshot.children.forEach { post ->
+                    post.getValue<UserPost>()?.let { existingPost ->
+                        if (existingPost.id == postId) {
+                            val likes = existingPost.likes?.toMutableList()
+                            if(likes?.contains(userId) == true) {
+                                likes.remove(userId)
+                            } else {
+                                likes?.add(userId)
+                            }
+
+                            list.add(
+                                UserPost(
+                                    existingPost.id,
+                                    existingPost.imageUrl,
+                                    existingPost.caption,
+                                    existingPost.comments,
+                                    likes,
+                                    existingPost.username,
+                                )
+                            )
+                        } else {
+                            list.add(existingPost)
+                        }
+                    }
+                }
+                updateMap["posts"] = list
+
+                // Use updateChildren to update the specific value within the object
+                userDBRef.child(userId).updateChildren(updateMap)
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Handle the error
+                Log.e("${this::class.java.simpleName} updatePostLikes", databaseError.message)
+            }
+        })
+    }
+
     fun uploadNewUserComment(newComment: UserComment, userId: String?, postId: String?) {
         if (userId == "null" || userId == null || postId == "null" || postId == null) {
             return
