@@ -191,7 +191,6 @@ class UserRepository @Inject constructor(
                                         it.imageUrl,
                                         it.caption,
                                         newCommentsList,
-                                        it.isLiked,
                                         it.likes,
                                         it.username
                                     )
@@ -210,47 +209,9 @@ class UserRepository @Inject constructor(
 
             override fun onCancelled(databaseError: DatabaseError) {
                 // Handle the error
-                Log.e("${this::class.java.simpleName} uploadNewUserPost", databaseError.message)
-            }
-        })
-        /*val comments = userDBRef
-            .child(userId)
-            .child("posts")
-            .child(postId)
-            .child("comments")
-
-        comments.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val updateMap = HashMap<String, Any>()
-
-                val list = ArrayList<UserComment>()
-                if (dataSnapshot.exists()) {
-                    // The list already exists, insert the new item
-                    dataSnapshot.children.forEach { existingComment ->
-                        existingComment.getValue<UserComment>()?.let {
-                            list.add(it)
-                        }
-                    }
-                    list.add(newComment)
-                } else {
-                    // The list doesn't exist, create it and insert the new item
-                    list.add(newComment)
-                }
-                updateMap["comments"] = list
-
-                // Use updateChildren to update the specific value within the object
-                userDBRef
-                    .child(userId)
-                    .child("posts")
-                    .child(postId)
-                    .updateChildren(updateMap)
-            }
-
-            override fun onCancelled(databaseError: DatabaseError) {
-                // Handle the error
                 Log.e("${this::class.java.simpleName} uploadNewUserComment", databaseError.message)
             }
-        })*/
+        })
     }
 
     fun uploadNewUserPost(newPost: UserPost, userId: String?) {

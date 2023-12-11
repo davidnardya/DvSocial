@@ -5,7 +5,6 @@ import androidx.compose.material.icons.filled.*
 import com.davidnardya.dvsocial.model.DvUser
 import com.davidnardya.dvsocial.model.UserComment
 import com.davidnardya.dvsocial.model.UserNotification
-import com.davidnardya.dvsocial.model.UserPost
 import com.davidnardya.dvsocial.navigation.navdrawer.MenuItem
 
 
@@ -87,70 +86,42 @@ object Constants {
     val commentsListOne = listOf(
         UserComment(
             "this is a text for a short comment",
-            true,
-            0,
-            ""
         ),
         UserComment(
             "this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment ",
-            false,
-            4,
-            ""
         ),
         UserComment(
             "this is a text for a short comment",
-            false,
-            1,
-            ""
         ),
         UserComment(
             "this is a text for a short comment",
-            false,
-            10,
-            ""
         ),
         UserComment(
             "this is a text for a short comment",
-            true,
-            0,
-            ""
         ),
         UserComment(
             "this is a text for a short comment",
-            false,
-            0,
-            ""
         ),
     )
 
     private val commentsListTwo = listOf(
         UserComment(
-            "this is a text for a short comment",
-            false,
-            0
+            "this is a text for a short comment"
         )
     )
 
     private val commentsListThree = listOf(
         UserComment(
-            "this is a text for a short comment",
-            false,
-            9
+            "this is a text for a short comment"
+        ),
+        UserComment(
+            "this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment "
         ),
         UserComment(
             "this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment ",
-            false,
-            1
-        ),
-        UserComment(
-            "this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment this is a text for a long comment ",
-            true,
-            5
         ),
         UserComment(
             "this is a text for a short comment",
-            false,
-            0
         )
     )
 

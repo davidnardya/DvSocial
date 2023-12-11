@@ -1,5 +1,6 @@
 package com.davidnardya.dvsocial.model
 
+import com.davidnardya.dvsocial.utils.Constants
 import com.google.firebase.database.IgnoreExtraProperties
 import com.google.gson.annotations.SerializedName
 
@@ -10,8 +11,8 @@ data class UserPost (
     val imageUrl: String? = "",
     val caption: String? = "",
     val comments: List<UserComment>? = emptyList(),
-    @SerializedName("is-liked")
-    override var isLiked: Boolean? = false,
-    override var likes: Int? = 0,
+    override var likes: List<String>? = emptyList(),
     var username: String? = ""
-) : Likeable
+) : Likeable {
+    override fun isLiked(): Boolean = likes?.contains(Constants.currentUser?.id.toString()) == true
+}

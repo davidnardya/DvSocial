@@ -25,7 +25,6 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.davidnardya.dvsocial.model.UserComment
-import com.davidnardya.dvsocial.model.UserPost
 import com.davidnardya.dvsocial.utils.Constants
 import com.davidnardya.dvsocial.utils.Constants.MAX_COMMENT_LENGTH
 import com.davidnardya.dvsocial.utils.cleanSpaces
@@ -68,8 +67,7 @@ fun CommentScreen(feedViewModel: FeedViewModel, navHostController: NavHostContro
                     feedViewModel.uploadNewUserComment(
                         UserComment(
                             commentText.cleanSpaces(),
-                            false,
-                            0,
+                            emptyList(),
                             currentPost.username
                         ),
                         Constants.currentUser?.id,

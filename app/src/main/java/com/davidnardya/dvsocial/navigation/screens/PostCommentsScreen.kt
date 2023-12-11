@@ -11,7 +11,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -34,7 +34,7 @@ fun PostCommentsScreen(viewModel: FeedViewModel, navController: NavHostControlle
         LazyColumn(modifier = Modifier.fillMaxWidth()) {
             itemsIndexed(commentsList) { index, comment ->
                 var likes by rememberSaveable {
-                    mutableStateOf(comment.likes ?: 0)
+                    mutableIntStateOf(comment.likes?.size ?: 0)
                 }
                 if (index == 0) {
                     SetHeader(likeable = comment, navController = navController)

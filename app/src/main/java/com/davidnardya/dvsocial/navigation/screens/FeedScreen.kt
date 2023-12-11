@@ -19,6 +19,7 @@ import androidx.compose.material.icons.filled.ThumbUpOffAlt
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -93,7 +94,7 @@ fun PopulateFeedContent(
     LazyColumn {
         itemsIndexed(postList) { index, post ->
             var likes by rememberSaveable {
-                mutableStateOf(post.likes ?: 0)
+                mutableIntStateOf(post.likes?.size ?: 0)
             }
             Column {
                 if (index == 0) {
@@ -189,18 +190,15 @@ fun PopulateFeedContent(
 @Composable
 fun CreateLikeButton(likeable: Likeable, likes: Int, onLikesChange: (Int) -> Unit) {
     var icon by rememberSaveable {
-        mutableStateOf(likeable.isLiked ?: false)
+        mutableStateOf(likeable.isLiked())
     }
     IconButton(
         onClick = {
             icon = !icon
-            likeable.isLiked = icon
-            if (likeable.isLiked == true) {
+            if (likeable.isLiked()) {
                 onLikesChange(likes.plus(1))
-                likeable.likes = likes
             } else {
                 onLikesChange(likes.minus(1))
-                likeable.likes = likes
             }
         }
     ) {

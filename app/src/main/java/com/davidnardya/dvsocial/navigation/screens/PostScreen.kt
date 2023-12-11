@@ -83,8 +83,7 @@ fun PostScreen(
                                     it.toString(),
                                     postText,
                                     null,
-                                    false,
-                                    0,
+                                    emptyList(),
                                     user?.username
                                 ),
                                 user?.id
