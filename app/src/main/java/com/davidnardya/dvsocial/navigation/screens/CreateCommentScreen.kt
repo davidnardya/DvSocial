@@ -70,10 +70,10 @@ fun CreateCommentScreen(feedViewModel: FeedViewModel, navHostController: NavHost
                             commentText.cleanSpaces(),
                             emptyList(),
                             currentPost.username,
-                            feedViewModel.generateNewId()
-                        ),
-                        Constants.currentUser?.id,
-                        currentPost.id
+                            feedViewModel.generateNewId(),
+                            Constants.currentUser?.id,
+                            feedViewModel.currentPostState.value.id
+                        )
                     )
 
                     feedViewModel.getFeedPostList()

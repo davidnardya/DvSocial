@@ -8,7 +8,9 @@ data class UserComment(
     @SerializedName("is-liked")
     override var likes: List<String>? = emptyList(),
     val username: String? = "",
-    val id: String? = ""
+    val id: String? = "",
+    val userId: String? = "",
+    val postId: String? = ""
 ) : Likeable {
     override fun isLiked(): Boolean = likes?.contains(Constants.currentUser?.id.toString()) == true
 }

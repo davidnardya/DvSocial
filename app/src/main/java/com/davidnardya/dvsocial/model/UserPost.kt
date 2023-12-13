@@ -12,7 +12,8 @@ data class UserPost (
     val caption: String? = "",
     val comments: List<UserComment>? = emptyList(),
     override var likes: List<String>? = emptyList(),
-    var username: String? = ""
+    var username: String? = "",
+    val userId: String? = ""
 ) : Likeable {
     override fun isLiked(): Boolean = likes?.contains(Constants.currentUser?.id.toString()) == true
 }

@@ -5,5 +5,5 @@ data class UserNotification (
     val userId: String? = "",
     val postId: String? = "",
     val commentId: String? = "",
-    val isFromComment: Boolean? = false
+    val isRead: Boolean? = false
 )

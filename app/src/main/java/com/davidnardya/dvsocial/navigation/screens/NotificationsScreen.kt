@@ -2,14 +2,12 @@ package com.davidnardya.dvsocial.navigation.screens
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.Divider
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,7 +31,7 @@ fun NotificationsScreen(loginViewModel: LoginViewModel, feedViewModel: FeedViewM
                     text = AnnotatedString(notification.text ?: "NoText"),
                     modifier = Modifier.padding(6.dp),
                     onClick = {
-                        showToast("Coming soon!")
+                        showToast("Coming soon! userId ${notification.userId}")
                     }
                 )
                 Divider(

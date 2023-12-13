@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.davidnardya.dvsocial.model.DvUser
 import com.davidnardya.dvsocial.model.UserComment
+import com.davidnardya.dvsocial.model.UserNotification
 import com.davidnardya.dvsocial.model.UserPost
 import com.davidnardya.dvsocial.repositories.UserRepository
 import com.davidnardya.dvsocial.utils.Constants
@@ -66,22 +67,52 @@ class FeedViewModel @Inject constructor(private val userRepository: UserReposito
 
     fun generateNewId() = userRepository.generateNewId()
 
+    private fun addNotification(
+        newNotification: UserNotification
+    ) = userRepository.addNotification(newNotification)
+
     fun updateCommentLikes(
         commentId: String?,
         postId: String?,
         userId: String?
-    ) = userRepository.updateCommentLikes(commentId, postId, userId)
+    ) {
+        userRepository.updateCommentLikes(commentId, postId, userId)
+        addNotification(
+            UserNotification(
+                "${Constants.currentUser?.username} liked your comment",
+                userId,
+                postId,
+                commentId
+            )
+        )
+    }
 
-    fun updatePostLikes(postId: String?, userId: String?) =
+    fun updatePostLikes(postId: String?, userId: String?) {
         userRepository.updatePostLikes(postId, userId)
+        addNotification(
+            UserNotification(
+                "${Constants.currentUser?.username} liked your comment",
+                userId,
+                postId
+            )
+        )
+    }
 
     fun uploadNewUserComment(
-        newComment: UserComment,
-        userId: String?,
-        postId: String?
-    ) = userRepository.uploadNewUserComment(newComment, userId, postId)
+        newComment: UserComment
+    ) {
+        userRepository.uploadNewUserComment(newComment)
+        addNotification(
+            UserNotification(
+                "${Constants.currentUser?.username} commented on your post",
+                newComment.userId,
+                newComment.postId,
+                newComment.id
+            )
+        )
+    }
 
-    fun uploadNewUserPost(newPost: UserPost, id: String?) =
-        userRepository.uploadNewUserPost(newPost, id)
+    fun uploadNewUserPost(newPost: UserPost) =
+        userRepository.uploadNewUserPost(newPost)
 
 }

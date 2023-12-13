@@ -85,9 +85,9 @@ fun CreatePostScreen(
                                     postText,
                                     null,
                                     emptyList(),
-                                    user?.username
-                                ),
-                                user?.id
+                                    user?.username,
+                                    user?.id
+                                )
                             )
                         }
                         delay(3000)

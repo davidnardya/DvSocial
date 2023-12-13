@@ -6,6 +6,7 @@ import com.davidnardya.dvsocial.api.UserApi
 import com.davidnardya.dvsocial.events.UserEvents
 import com.davidnardya.dvsocial.model.DvUser
 import com.davidnardya.dvsocial.model.UserComment
+import com.davidnardya.dvsocial.model.UserNotification
 import com.davidnardya.dvsocial.model.UserPost
 import com.davidnardya.dvsocial.utils.Constants
 import com.davidnardya.dvsocial.utils.Constants.DID_LOG_IN
@@ -161,6 +162,44 @@ class UserRepository @Inject constructor(
         return key
     }
 
+    fun addNotification(newNotification: UserNotification) {
+
+        val notifications = newNotification.userId?.let {
+            userDBRef
+                .child(it)
+                .child("notifications")
+        }
+
+        notifications?.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val updateMap = HashMap<String, Any>()
+
+                val list = ArrayList<UserNotification>()
+                if (dataSnapshot.exists()) {
+                    // The list already exists, insert the new item
+                    dataSnapshot.children.forEach { existingNotification ->
+                        existingNotification.getValue<UserNotification>()?.let {
+                            list.add(it)
+                        }
+                    }
+                    list.add(newNotification)
+                } else {
+                    // The list doesn't exist, create it and insert the new item
+                    list.add(newNotification)
+                }
+                updateMap["notifications"] = list
+
+                // Use updateChildren to update the specific value within the object
+                userDBRef.child(newNotification.userId).updateChildren(updateMap)
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Handle the error
+                Log.e("${this::class.java.simpleName} addNotification", databaseError.message)
+            }
+        })
+    }
+
     fun updateCommentLikes(commentId: String?, postId: String?, userId: String?) {
         if (
             commentId == "null" || commentId == null ||
@@ -196,6 +235,8 @@ class UserRepository @Inject constructor(
                                             likes,
                                             existingComment.username,
                                             existingComment.id,
+                                            existingComment.userId,
+                                            existingComment.postId
                                         )
                                     )
                                 } else {
@@ -209,6 +250,7 @@ class UserRepository @Inject constructor(
                                         commentsList,
                                         existingPost.likes,
                                         existingPost.username,
+                                        existingPost.userId
                                     )
                                 )
                             }
@@ -259,6 +301,7 @@ class UserRepository @Inject constructor(
                                     existingPost.comments,
                                     likes,
                                     existingPost.username,
+                                    existingPost.userId
                                 )
                             )
                         } else {
@@ -277,16 +320,15 @@ class UserRepository @Inject constructor(
         })
     }
 
-    fun uploadNewUserComment(newComment: UserComment, userId: String?, postId: String?) {
-        if (userId == "null" || userId == null || postId == "null" || postId == null) {
-            return
+    fun uploadNewUserComment(newComment: UserComment) {
+
+        val posts = newComment.userId?.let {
+            userDBRef
+                .child(it)
+                .child("posts")
         }
 
-        val posts = userDBRef
-            .child(userId)
-            .child("posts")
-
-        posts.addListenerForSingleValueEvent(object : ValueEventListener {
+        posts?.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val updateMap = HashMap<String, Any>()
 
@@ -294,7 +336,7 @@ class UserRepository @Inject constructor(
                 if (dataSnapshot.exists()) {
                     dataSnapshot.children.forEach { existingPost ->
                         existingPost.getValue<UserPost>()?.let {
-                            if (it.id == postId) {
+                            if (it.id == newComment.postId) {
                                 val newCommentsList = it.comments?.let { userComments ->
                                     ArrayList<UserComment>(
                                         userComments
@@ -308,7 +350,8 @@ class UserRepository @Inject constructor(
                                         it.caption,
                                         newCommentsList,
                                         it.likes,
-                                        it.username
+                                        it.username,
+                                        it.userId
                                     )
                                 )
                             } else {
@@ -320,7 +363,7 @@ class UserRepository @Inject constructor(
                 updateMap["posts"] = userPosts
 
                 // Use updateChildren to update the specific value within the object
-                userDBRef.child(userId).updateChildren(updateMap)
+                userDBRef.child(newComment.userId).updateChildren(updateMap)
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
@@ -330,15 +373,14 @@ class UserRepository @Inject constructor(
         })
     }
 
-    fun uploadNewUserPost(newPost: UserPost, userId: String?) {
-        if (userId == "null" || userId == null) {
-            return
+    fun uploadNewUserPost(newPost: UserPost) {
+        val posts = newPost.userId?.let {
+            userDBRef
+                .child(it)
+                .child("posts")
         }
-        val posts = userDBRef
-            .child(userId)
-            .child("posts")
 
-        posts.addListenerForSingleValueEvent(object : ValueEventListener {
+        posts?.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val updateMap = HashMap<String, Any>()
 
@@ -358,7 +400,7 @@ class UserRepository @Inject constructor(
                 updateMap["posts"] = list
 
                 // Use updateChildren to update the specific value within the object
-                userDBRef.child(userId).updateChildren(updateMap)
+                userDBRef.child(newPost.userId).updateChildren(updateMap)
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
