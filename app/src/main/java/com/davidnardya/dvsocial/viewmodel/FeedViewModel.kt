@@ -91,7 +91,7 @@ class FeedViewModel @Inject constructor(private val userRepository: UserReposito
         userRepository.updatePostLikes(postId, userId)
         addNotification(
             UserNotification(
-                "${Constants.currentUser?.username} liked your comment",
+                "${Constants.currentUser?.username} liked your post",
                 userId,
                 postId
             )
