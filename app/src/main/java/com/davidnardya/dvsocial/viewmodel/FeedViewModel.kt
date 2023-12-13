@@ -112,7 +112,15 @@ class FeedViewModel @Inject constructor(private val userRepository: UserReposito
         )
     }
 
-    fun uploadNewUserPost(newPost: UserPost) =
-        userRepository.uploadNewUserPost(newPost)
+    fun uploadNewUserPost(newPost: UserPost) = userRepository.uploadNewUserPost(newPost)
 
+    fun updateCurrentPostById(userId: String, postId: String)  {
+        viewModelScope.launch {
+            val post = userRepository.getPostById(userId, postId)
+            while (post == null) {
+                delay(1000)
+            }
+            currentPostState.value = post
+        }
+    }
 }

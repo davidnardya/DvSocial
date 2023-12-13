@@ -13,4 +13,5 @@ sealed class Screen(val route: String, var uri:Uri? = null) {
     object Post: Screen("PostScreen")
     object Comment: Screen("CommentScreen")
     object PhotoPick: Screen("CameraScreen")
+    object PostFromNotification: Screen("PostFromNotificationScreen")
 }

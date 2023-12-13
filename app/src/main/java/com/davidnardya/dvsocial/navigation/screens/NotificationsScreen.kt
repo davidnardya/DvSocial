@@ -15,12 +15,10 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.davidnardya.dvsocial.utils.Constants
-import com.davidnardya.dvsocial.utils.showToast
 import com.davidnardya.dvsocial.viewmodel.FeedViewModel
-import com.davidnardya.dvsocial.viewmodel.LoginViewModel
 
 @Composable
-fun NotificationsScreen(loginViewModel: LoginViewModel, feedViewModel: FeedViewModel,navHostController: NavHostController) {
+fun NotificationsScreen(feedViewModel: FeedViewModel,navHostController: NavHostController) {
     val notifications = Constants.currentUser?.notifications ?: emptyList()
     LazyColumn {
         items(notifications) { notification ->
@@ -31,7 +29,10 @@ fun NotificationsScreen(loginViewModel: LoginViewModel, feedViewModel: FeedViewM
                     text = AnnotatedString(notification.text ?: "NoText"),
                     modifier = Modifier.padding(6.dp),
                     onClick = {
-                        showToast("Coming soon! userId ${notification.userId}")
+                        if(notification.userId != null && notification.postId != null) {
+                            feedViewModel.updateCurrentPostById(notification.userId,notification.postId)
+                            navHostController.navigate(route = Screen.PostFromNotification.route)
+                        }
                     }
                 )
                 Divider(

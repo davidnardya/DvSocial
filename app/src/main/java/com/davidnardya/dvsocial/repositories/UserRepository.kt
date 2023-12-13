@@ -25,6 +25,7 @@ import com.google.firebase.database.getValue
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -205,7 +206,7 @@ class UserRepository @Inject constructor(
             commentId == "null" || commentId == null ||
             postId == "null" || postId == null ||
             userId == "null" || userId == null
-            ) {
+        ) {
             return
         }
         val posts = userDBRef
@@ -222,9 +223,9 @@ class UserRepository @Inject constructor(
                         if (existingPost.id == postId) {
                             val commentsList = ArrayList<UserComment>()
                             existingPost.comments?.forEach { existingComment ->
-                                if(existingComment.id == commentId) {
+                                if (existingComment.id == commentId) {
                                     val likes = existingComment.likes?.toMutableList()
-                                    if(likes?.contains(userId) == true) {
+                                    if (likes?.contains(userId) == true) {
                                         likes.remove(userId)
                                     } else {
                                         likes?.add(userId)
@@ -287,7 +288,7 @@ class UserRepository @Inject constructor(
                     post.getValue<UserPost>()?.let { existingPost ->
                         if (existingPost.id == postId) {
                             val likes = existingPost.likes?.toMutableList()
-                            if(likes?.contains(userId) == true) {
+                            if (likes?.contains(userId) == true) {
                                 likes.remove(userId)
                             } else {
                                 likes?.add(userId)
@@ -408,6 +409,36 @@ class UserRepository @Inject constructor(
                 Log.e("${this::class.java.simpleName} uploadNewUserPost", databaseError.message)
             }
         })
+    }
+
+    suspend fun getPostById(userId: String, postId: String): UserPost? {
+
+        var post: UserPost? = null
+
+        val posts = userDBRef.child(userId).child("posts")
+
+        posts.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                // The list already exists, insert the new item
+                dataSnapshot.children.forEach { existingPost ->
+                    existingPost.getValue<UserPost>()?.let {
+                        if (it.id == postId) {
+                            post = it
+                        }
+                    }
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Handle the error
+                Log.e("${this::class.java.simpleName} uploadNewUserPost", databaseError.message)
+            }
+        })
+
+        while(post == null) {
+            delay(1000)
+        }
+        return post
     }
 }
 

@@ -54,7 +54,7 @@ fun SetupNavGraph(
         composable(
             route = Screen.Notifications.route
         ) {
-            NotificationsScreen(loginViewModel, feedViewModel, navHostController)
+            NotificationsScreen(feedViewModel, navHostController)
         }
         composable(
             route = Screen.Post.route
@@ -70,6 +70,11 @@ fun SetupNavGraph(
             route = Screen.PhotoPick.route
         ) {
             PhotoPickScreen(navHostController)
+        }
+        composable(
+            route = Screen.PostFromNotification.route
+        ) {
+            PostFromNotificationScreen(feedViewModel, navHostController)
         }
     }
 }
