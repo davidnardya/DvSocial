@@ -27,7 +27,6 @@ class FeedViewModel @Inject constructor(private val userRepository: UserReposito
         userRepository.getUserListFlow()
 
 
-
     fun getFeedPostList() {
         val newPostList = mutableListOf<UserPost>()
         getUsersFlow().onEach { userList ->
@@ -39,9 +38,7 @@ class FeedViewModel @Inject constructor(private val userRepository: UserReposito
             }
         }.launchIn(viewModelScope)
         postList.value = newPostList
-//        return newPostList
     }
-
 
 
     fun subscribeToUserListFlow() {
@@ -53,10 +50,13 @@ class FeedViewModel @Inject constructor(private val userRepository: UserReposito
     fun checkFeedPostList() {
         viewModelScope.launch {
             var i = true
-//            userRepository.subscribeToCurrentUserFlow()
             while (i) {
                 delay(1000L)
-                if (postList.value?.isNotEmpty() == true && userRepository.getIsUserLoggedIn() && Constants.currentUser != null) {
+                if (
+                    postList.value?.isNotEmpty() == true &&
+                    userRepository.getIsUserLoggedIn() &&
+                    Constants.currentUser != null
+                ) {
                     i = false
                     isLoadingComplete.value = true
                 }
@@ -66,12 +66,22 @@ class FeedViewModel @Inject constructor(private val userRepository: UserReposito
 
     fun generateNewId() = userRepository.generateNewId()
 
-    fun updateCommentLikes(commentId: String?, postId: String?, userId: String?) = userRepository.updateCommentLikes(commentId, postId, userId)
+    fun updateCommentLikes(
+        commentId: String?,
+        postId: String?,
+        userId: String?
+    ) = userRepository.updateCommentLikes(commentId, postId, userId)
 
-    fun updatePostLikes(postId: String?, userId: String?) = userRepository.updatePostLikes(postId, userId)
+    fun updatePostLikes(postId: String?, userId: String?) =
+        userRepository.updatePostLikes(postId, userId)
 
-    fun uploadNewUserComment(newComment: UserComment, userId: String?, postId: String?) = userRepository.uploadNewUserComment(newComment, userId, postId)
+    fun uploadNewUserComment(
+        newComment: UserComment,
+        userId: String?,
+        postId: String?
+    ) = userRepository.uploadNewUserComment(newComment, userId, postId)
 
-    fun uploadNewUserPost(newPost: UserPost, id: String?) = userRepository.uploadNewUserPost(newPost, id)
+    fun uploadNewUserPost(newPost: UserPost, id: String?) =
+        userRepository.uploadNewUserPost(newPost, id)
 
 }

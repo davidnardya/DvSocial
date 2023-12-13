@@ -54,17 +54,17 @@ fun SetupNavGraph(
         composable(
             route = Screen.Notifications.route
         ) {
-            NotificationsScreen(loginViewModel, navHostController)
+            NotificationsScreen(loginViewModel, feedViewModel, navHostController)
         }
         composable(
             route = Screen.Post.route
         ) {
-            PostScreen(navHostController, feedViewModel, loginViewModel, Screen.Post.uri)
+            CreatePostScreen(navHostController, feedViewModel, loginViewModel, Screen.Post.uri)
         }
         composable(
             route = Screen.Comment.route
         ) {
-            CommentScreen(feedViewModel, navHostController)
+            CreateCommentScreen(feedViewModel, navHostController)
         }
         composable(
             route = Screen.PhotoPick.route

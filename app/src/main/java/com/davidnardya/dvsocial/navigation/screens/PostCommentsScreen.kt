@@ -54,7 +54,12 @@ fun PostCommentsScreen(viewModel: FeedViewModel, navController: NavHostControlle
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    CreateLikeButton(comment, likes, onLikesChange = { likes = it }, feedViewModel = viewModel)
+                    CreateLikeButton(
+                        comment,
+                        likes,
+                        onLikesChange = { likes = it },
+                        feedViewModel = viewModel
+                    )
                     Text(
                         text = showLikesText(likes),
                         modifier = Modifier

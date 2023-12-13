@@ -14,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -33,9 +34,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
-fun CommentScreen(feedViewModel: FeedViewModel, navHostController: NavHostController) {
+fun CreateCommentScreen(feedViewModel: FeedViewModel, navHostController: NavHostController) {
     var commentText by rememberSaveable { mutableStateOf("") }
-    var buttonHeight by rememberSaveable { mutableStateOf(0) }
+    var buttonHeight by rememberSaveable { mutableIntStateOf(0) }
     val screenHeight = LocalConfiguration.current.screenHeightDp
     val scope = rememberCoroutineScope()
     var showSpinner by rememberSaveable { mutableStateOf(false) }
@@ -75,19 +76,6 @@ fun CommentScreen(feedViewModel: FeedViewModel, navHostController: NavHostContro
                         currentPost.id
                     )
 
-//                    val newList = currentPost.comments?.toMutableList()
-//                    newList?.add(
-//                        UserComment(commentText.cleanSpaces(),false,0,currentPost.username)
-//                    )
-//                    val newPost = UserPost(
-//                        imageUrl = currentPost.imageUrl,
-//                        caption = currentPost.caption,
-//                        comments = newList,
-//                        isLiked = currentPost.isLiked,
-//                        likes = currentPost.likes
-//                    )
-//                    feedViewModel.currentPostState.value = newPost
-//                    feedViewModel.uploadNewUserPost(newPost,Constants.currentUser?.id)
                     feedViewModel.getFeedPostList()
                     showSpinner = true
                     delay(3000)

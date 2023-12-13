@@ -36,7 +36,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
-fun PostScreen(
+fun CreatePostScreen(
     navController: NavHostController,
     feedViewModel: FeedViewModel,
     loginViewModel: LoginViewModel,

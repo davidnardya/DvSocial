@@ -22,7 +22,7 @@ import com.davidnardya.dvsocial.viewmodel.FeedViewModel
 import com.davidnardya.dvsocial.viewmodel.LoginViewModel
 
 @Composable
-fun NotificationsScreen(loginViewModel: LoginViewModel, navHostController: NavHostController) {
+fun NotificationsScreen(loginViewModel: LoginViewModel, feedViewModel: FeedViewModel,navHostController: NavHostController) {
     val notifications = Constants.currentUser?.notifications ?: emptyList()
     LazyColumn {
         items(notifications) { notification ->
