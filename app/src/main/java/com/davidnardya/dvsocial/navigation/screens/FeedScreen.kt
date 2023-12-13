@@ -40,6 +40,7 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.davidnardya.dvsocial.model.Likeable
+import com.davidnardya.dvsocial.model.UserComment
 import com.davidnardya.dvsocial.model.UserPost
 import com.davidnardya.dvsocial.navigation.AppBar
 import com.davidnardya.dvsocial.navigation.navdrawer.DrawerBody
@@ -207,14 +208,18 @@ fun CreateLikeButton(
             icon = !icon
             if (likeable.isLiked()) {
                 onLikesChange(likes.plus(1))
-                if (likeable is UserPost) {
-                    feedViewModel.updatePostLikes(likeable.id, Constants.currentUser?.id)
-                }
             } else {
                 onLikesChange(likes.minus(1))
-                if (likeable is UserPost) {
-                    feedViewModel.updatePostLikes(likeable.id, Constants.currentUser?.id)
-                }
+            }
+            if (likeable is UserPost) {
+                feedViewModel.updatePostLikes(likeable.id, Constants.currentUser?.id)
+            }
+            if (likeable is UserComment) {
+                feedViewModel.updateCommentLikes(
+                    likeable.id,
+                    feedViewModel.currentPostState.value.id,
+                    Constants.currentUser?.id
+                )
             }
         }
     ) {

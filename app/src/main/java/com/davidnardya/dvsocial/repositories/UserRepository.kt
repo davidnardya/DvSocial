@@ -161,6 +161,73 @@ class UserRepository @Inject constructor(
         return key
     }
 
+    fun updateCommentLikes(commentId: String?, postId: String?, userId: String?) {
+        if (
+            commentId == "null" || commentId == null ||
+            postId == "null" || postId == null ||
+            userId == "null" || userId == null
+            ) {
+            return
+        }
+        val posts = userDBRef
+            .child(userId)
+            .child("posts")
+
+        posts.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val updateMap = HashMap<String, Any>()
+
+                val postsList = ArrayList<UserPost>()
+                dataSnapshot.children.forEach { post ->
+                    post.getValue<UserPost>()?.let { existingPost ->
+                        if (existingPost.id == postId) {
+                            val commentsList = ArrayList<UserComment>()
+                            existingPost.comments?.forEach { existingComment ->
+                                if(existingComment.id == commentId) {
+                                    val likes = existingComment.likes?.toMutableList()
+                                    if(likes?.contains(userId) == true) {
+                                        likes.remove(userId)
+                                    } else {
+                                        likes?.add(userId)
+                                    }
+                                    commentsList.add(
+                                        UserComment(
+                                            existingComment.text,
+                                            likes,
+                                            existingComment.username,
+                                            existingComment.id,
+                                        )
+                                    )
+                                } else {
+                                    commentsList.add(existingComment)
+                                }
+                                postsList.add(
+                                    UserPost(
+                                        existingPost.id,
+                                        existingPost.imageUrl,
+                                        existingPost.caption,
+                                        commentsList,
+                                        existingPost.likes,
+                                        existingPost.username,
+                                    )
+                                )
+                            }
+                        } else {
+                            postsList.add(existingPost)
+                        }
+                    }
+                }
+                updateMap["posts"] = postsList
+
+                userDBRef.child(userId).updateChildren(updateMap)
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.e("${this::class.java.simpleName} updatePostLikes", databaseError.message)
+            }
+        })
+    }
+
     fun updatePostLikes(postId: String?, userId: String?) {
         if (postId == "null" || postId == null || userId == "null" || userId == null) {
             return
@@ -174,7 +241,6 @@ class UserRepository @Inject constructor(
                 val updateMap = HashMap<String, Any>()
 
                 val list = ArrayList<UserPost>()
-                // The list already exists, insert the new item
                 dataSnapshot.children.forEach { post ->
                     post.getValue<UserPost>()?.let { existingPost ->
                         if (existingPost.id == postId) {
@@ -202,12 +268,10 @@ class UserRepository @Inject constructor(
                 }
                 updateMap["posts"] = list
 
-                // Use updateChildren to update the specific value within the object
                 userDBRef.child(userId).updateChildren(updateMap)
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
-                // Handle the error
                 Log.e("${this::class.java.simpleName} updatePostLikes", databaseError.message)
             }
         })

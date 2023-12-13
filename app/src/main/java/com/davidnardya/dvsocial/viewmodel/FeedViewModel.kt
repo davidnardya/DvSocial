@@ -66,16 +66,12 @@ class FeedViewModel @Inject constructor(private val userRepository: UserReposito
 
     fun generateNewId() = userRepository.generateNewId()
 
-    fun updatePostLikes(postId: String?, userId: String?) {
-        userRepository.updatePostLikes(postId, userId)
-    }
+    fun updateCommentLikes(commentId: String?, postId: String?, userId: String?) = userRepository.updateCommentLikes(commentId, postId, userId)
 
-    fun uploadNewUserComment(newComment: UserComment, userId: String?, postId: String?) {
-        userRepository.uploadNewUserComment(newComment, userId, postId)
-    }
+    fun updatePostLikes(postId: String?, userId: String?) = userRepository.updatePostLikes(postId, userId)
 
-    fun uploadNewUserPost(newPost: UserPost, id: String?) {
-        userRepository.uploadNewUserPost(newPost, id)
-    }
+    fun uploadNewUserComment(newComment: UserComment, userId: String?, postId: String?) = userRepository.uploadNewUserComment(newComment, userId, postId)
+
+    fun uploadNewUserPost(newPost: UserPost, id: String?) = userRepository.uploadNewUserPost(newPost, id)
 
 }

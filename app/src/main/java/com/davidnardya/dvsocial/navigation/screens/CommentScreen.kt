@@ -68,7 +68,8 @@ fun CommentScreen(feedViewModel: FeedViewModel, navHostController: NavHostContro
                         UserComment(
                             commentText.cleanSpaces(),
                             emptyList(),
-                            currentPost.username
+                            currentPost.username,
+                            feedViewModel.generateNewId()
                         ),
                         Constants.currentUser?.id,
                         currentPost.id
